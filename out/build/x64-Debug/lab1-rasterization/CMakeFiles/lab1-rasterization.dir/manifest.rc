@@ -1,0 +1,2 @@
+#pragma code_page(65001)
+1 /* CREATEPROCESS_MANIFEST_RESOURCE_ID */ 24 /* RT_MANIFEST */ "C:/Dev/tda362-labs/out/build/x64-Debug/lab1-rasterization/CMakeFiles/lab1-rasterization.dir/embed.manifest"

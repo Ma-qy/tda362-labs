@@ -1,0 +1,406 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.2"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "labhelper",
+					"childIndexes" : 
+					[
+						2
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "labhelper",
+					"targetIndexes" : 
+					[
+						7
+					]
+				},
+				{
+					"build" : "labhelper/imgui",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.2"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 2,
+					"source" : "external_src/imgui-1.51",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "lab1-rasterization",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 3,
+					"source" : "lab1-rasterization",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "lab2-textures",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 4,
+					"source" : "lab2-textures",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "lab3-camera",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 5,
+					"source" : "lab3-camera",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "lab4-shading",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 6,
+					"source" : "lab4-shading",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "lab5-rendertotexture",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 7,
+					"source" : "lab5-rendertotexture",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "lab6-shadowmaps",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 8,
+					"source" : "lab6-shadowmaps",
+					"targetIndexes" : 
+					[
+						6
+					]
+				},
+				{
+					"build" : "pathtracer",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 9,
+					"source" : "pathtracer",
+					"targetIndexes" : 
+					[
+						8
+					]
+				},
+				{
+					"build" : "project",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 10,
+					"source" : "project",
+					"targetIndexes" : 
+					[
+						9
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "computer-graphics-labs"
+				},
+				{
+					"childIndexes" : 
+					[
+						2
+					],
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "labhelper",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						7
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "imgui",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "lab1-rasterization",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4
+					],
+					"name" : "lab2-textures",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						5
+					],
+					"name" : "lab3-camera",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						6
+					],
+					"name" : "lab4-shading",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						7
+					],
+					"name" : "lab5-rendertotexture",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						8
+					],
+					"name" : "lab6-shadowmaps",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						6
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						9
+					],
+					"name" : "pathtracer",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						8
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						10
+					],
+					"name" : "project",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						9
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 2,
+					"id" : "imgui::@05e4df8bc0b128258c15",
+					"jsonFile" : "target-imgui-Debug-0b6a0eb36737411fa5f7.json",
+					"name" : "imgui",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "lab1-rasterization::@031b98efd01c3612fb33",
+					"jsonFile" : "target-lab1-rasterization-Debug-a759c82364ebea316877.json",
+					"name" : "lab1-rasterization",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "lab2-textures::@1cd07580f0d8b3057e3e",
+					"jsonFile" : "target-lab2-textures-Debug-06ccde545585ea99b404.json",
+					"name" : "lab2-textures",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "lab3-camera::@7a7cd72df8c4e9cd2d01",
+					"jsonFile" : "target-lab3-camera-Debug-a1c6d7e0a16224ece897.json",
+					"name" : "lab3-camera",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "lab4-shading::@c519a5bc0b72f065b375",
+					"jsonFile" : "target-lab4-shading-Debug-ee3f69aeba874dc81579.json",
+					"name" : "lab4-shading",
+					"projectIndex" : 6
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "lab5-rendertotexture::@8a52b97a013e2903c2de",
+					"jsonFile" : "target-lab5-rendertotexture-Debug-5b53640619d1c20d9a46.json",
+					"name" : "lab5-rendertotexture",
+					"projectIndex" : 7
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "lab6-shadowmaps::@ed71f48db2acb0b9faed",
+					"jsonFile" : "target-lab6-shadowmaps-Debug-aa7a253b18a08929f6b6.json",
+					"name" : "lab6-shadowmaps",
+					"projectIndex" : 8
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "labhelper::@99c7817de60bcd60a531",
+					"jsonFile" : "target-labhelper-Debug-e582409b12c376d1516f.json",
+					"name" : "labhelper",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "pathtracer::@28ab86c6bbb037c17626",
+					"jsonFile" : "target-pathtracer-Debug-0ef36962f38f0a009009.json",
+					"name" : "pathtracer",
+					"projectIndex" : 9
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "project::@1ff0e79755c878899e1a",
+					"jsonFile" : "target-project-Debug-3cf1760ec55b70deacce.json",
+					"name" : "project",
+					"projectIndex" : 10
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Dev/tda362-labs/out/build/x64-Debug",
+		"source" : "C:/Dev/tda362-labs"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 2
+	}
+}

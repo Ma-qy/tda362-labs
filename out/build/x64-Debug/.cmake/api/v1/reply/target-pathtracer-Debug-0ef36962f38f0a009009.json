@@ -1,0 +1,334 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "C:/Dev/tda362-labs/bin/pathtracer.exe"
+		},
+		{
+			"path" : "C:/Dev/tda362-labs/bin/pathtracer.pdb"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"target_link_libraries",
+			"add_definitions",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"pathtracer/CMakeLists.txt",
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 20,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 35,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 37,
+				"parent" : 3
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 38,
+				"parent" : 3
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 6,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc -openmp /MDd /Zi /Ob0 /Od /RTC1"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 4,
+					"define" : "GLM_ENABLE_EXPERIMENTAL"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "_CRT_SECURE_NO_WARNINGS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 6,
+					"path" : "C:/Dev/tda362-labs/external/embree2/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "C:/Dev/tda362-labs/labhelper"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "C:/Dev/tda362-labs/external_src/stb-master"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "C:/Dev/tda362-labs/external_src/tinyobjloader-1.0.6"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "C:/Dev/tda362-labs/external/sdl2/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "C:/Dev/tda362-labs/external/glm/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "C:/Dev/tda362-labs/external/glew/include"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "C:/Dev/tda362-labs/external_src/imgui-1.51"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "11"
+			},
+			"sourceIndexes" : 
+			[
+				0,
+				2,
+				4,
+				6,
+				8,
+				10
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 2,
+			"id" : "labhelper::@99c7817de60bcd60a531"
+		},
+		{
+			"backtrace" : 2,
+			"id" : "imgui::@05e4df8bc0b128258c15"
+		}
+	],
+	"id" : "pathtracer::@28ab86c6bbb037c17626",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/DWIN32 /D_WINDOWS /W3 /GR /EHsc -openmp /MDd /Zi /Ob0 /Od /RTC1",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "/machine:x64 /debug /INCREMENTAL /subsystem:console",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..\\labhelper\\labhelper.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "..\\..\\..\\..\\external\\embree2\\lib\\embree.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\labhelper\\imgui\\imgui.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\external\\sdl2\\lib\\SDL2.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\external\\sdl2\\lib\\SDL2main.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "..\\..\\..\\..\\external\\glew\\lib\\glew32.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "opengl32.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "glu32.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "pathtracer",
+	"nameOnDisk" : "pathtracer.exe",
+	"paths" : 
+	{
+		"build" : "pathtracer",
+		"source" : "pathtracer"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				2,
+				4,
+				6,
+				8,
+				10
+			]
+		},
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				1,
+				3,
+				5,
+				7,
+				9
+			]
+		},
+		{
+			"name" : "Shaders",
+			"sourceIndexes" : 
+			[
+				11,
+				12,
+				13,
+				14
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "pathtracer/main.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "pathtracer/Pathtracer.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "pathtracer/Pathtracer.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "pathtracer/sampling.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "pathtracer/sampling.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "pathtracer/HDRImage.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "pathtracer/HDRImage.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "pathtracer/embree.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "pathtracer/embree.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "pathtracer/material.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "pathtracer/material.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "pathtracer/copyTexture.frag",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "pathtracer/copyTexture.vert",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "pathtracer/simple.frag",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "pathtracer/simple.vert",
+			"sourceGroupIndex" : 2
+		}
+	],
+	"type" : "EXECUTABLE"
+}

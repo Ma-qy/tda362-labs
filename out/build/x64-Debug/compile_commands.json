@@ -1,0 +1,117 @@
+[
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od  /O2 /Folabhelper\\CMakeFiles\\labhelper.dir\\labhelper.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\labhelper\\labhelper.cpp",
+  "file": "C:/Dev/tda362-labs/labhelper/labhelper.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od  /O2 /Folabhelper\\CMakeFiles\\labhelper.dir\\Model.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\labhelper\\Model.cpp",
+  "file": "C:/Dev/tda362-labs/labhelper/Model.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od  /Folabhelper\\CMakeFiles\\labhelper.dir\\hdr.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\labhelper\\hdr.cpp",
+  "file": "C:/Dev/tda362-labs/labhelper/hdr.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od  /Folabhelper\\CMakeFiles\\labhelper.dir\\imgui_impl_sdl_gl3.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\labhelper\\imgui_impl_sdl_gl3.cpp",
+  "file": "C:/Dev/tda362-labs/labhelper/imgui_impl_sdl_gl3.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 /Folabhelper\\imgui\\CMakeFiles\\imgui.dir\\imgui.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\external_src\\imgui-1.51\\imgui.cpp",
+  "file": "C:/Dev/tda362-labs/external_src/imgui-1.51/imgui.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 /Folabhelper\\imgui\\CMakeFiles\\imgui.dir\\imgui_draw.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\external_src\\imgui-1.51\\imgui_draw.cpp",
+  "file": "C:/Dev/tda362-labs/external_src/imgui-1.51/imgui_draw.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 /Folab1-rasterization\\CMakeFiles\\lab1-rasterization.dir\\lab1_main.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\lab1-rasterization\\lab1_main.cpp",
+  "file": "C:/Dev/tda362-labs/lab1-rasterization/lab1_main.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 /Folab2-textures\\CMakeFiles\\lab2-textures.dir\\lab2_main.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\lab2-textures\\lab2_main.cpp",
+  "file": "C:/Dev/tda362-labs/lab2-textures/lab2_main.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 /Folab3-camera\\CMakeFiles\\lab3-camera.dir\\lab3_main.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\lab3-camera\\lab3_main.cpp",
+  "file": "C:/Dev/tda362-labs/lab3-camera/lab3_main.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 /Folab4-shading\\CMakeFiles\\lab4-shading.dir\\lab4_main.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\lab4-shading\\lab4_main.cpp",
+  "file": "C:/Dev/tda362-labs/lab4-shading/lab4_main.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 /Folab5-rendertotexture\\CMakeFiles\\lab5-rendertotexture.dir\\lab5_main.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\lab5-rendertotexture\\lab5_main.cpp",
+  "file": "C:/Dev/tda362-labs/lab5-rendertotexture/lab5_main.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 /Folab6-shadowmaps\\CMakeFiles\\lab6-shadowmaps.dir\\lab6_main.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\lab6-shadowmaps\\lab6_main.cpp",
+  "file": "C:/Dev/tda362-labs/lab6-shadowmaps/lab6_main.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 /Folab6-shadowmaps\\CMakeFiles\\lab6-shadowmaps.dir\\fbo.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\lab6-shadowmaps\\fbo.cpp",
+  "file": "C:/Dev/tda362-labs/lab6-shadowmaps/fbo.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\external\\embree2\\include -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc -openmp /MDd /Zi /Ob0 /Od /RTC1 /Fopathtracer\\CMakeFiles\\pathtracer.dir\\main.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\pathtracer\\main.cpp",
+  "file": "C:/Dev/tda362-labs/pathtracer/main.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\external\\embree2\\include -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc -openmp /MDd /Zi /Ob0 /Od /RTC1 /Fopathtracer\\CMakeFiles\\pathtracer.dir\\Pathtracer.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\pathtracer\\Pathtracer.cpp",
+  "file": "C:/Dev/tda362-labs/pathtracer/Pathtracer.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\external\\embree2\\include -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc -openmp /MDd /Zi /Ob0 /Od /RTC1 /Fopathtracer\\CMakeFiles\\pathtracer.dir\\sampling.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\pathtracer\\sampling.cpp",
+  "file": "C:/Dev/tda362-labs/pathtracer/sampling.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\external\\embree2\\include -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc -openmp /MDd /Zi /Ob0 /Od /RTC1 /Fopathtracer\\CMakeFiles\\pathtracer.dir\\HDRImage.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\pathtracer\\HDRImage.cpp",
+  "file": "C:/Dev/tda362-labs/pathtracer/HDRImage.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\external\\embree2\\include -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc -openmp /MDd /Zi /Ob0 /Od /RTC1 /Fopathtracer\\CMakeFiles\\pathtracer.dir\\embree.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\pathtracer\\embree.cpp",
+  "file": "C:/Dev/tda362-labs/pathtracer/embree.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\external\\embree2\\include -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc -openmp /MDd /Zi /Ob0 /Od /RTC1 /Fopathtracer\\CMakeFiles\\pathtracer.dir\\material.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\pathtracer\\material.cpp",
+  "file": "C:/Dev/tda362-labs/pathtracer/material.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 /Foproject\\CMakeFiles\\project.dir\\main.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\project\\main.cpp",
+  "file": "C:/Dev/tda362-labs/project/main.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 /Foproject\\CMakeFiles\\project.dir\\fbo.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\project\\fbo.cpp",
+  "file": "C:/Dev/tda362-labs/project/fbo.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 /Foproject\\CMakeFiles\\project.dir\\heightfield.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\project\\heightfield.cpp",
+  "file": "C:/Dev/tda362-labs/project/heightfield.cpp"
+},
+{
+  "directory": "C:/Dev/tda362-labs/out/build/x64-Debug",
+  "command": "C:\\PROGRA~2\\MIB055~1\\2019\\COMMUN~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx64\\x64\\cl.exe  /nologo /TP -DGLM_ENABLE_EXPERIMENTAL -D_CRT_SECURE_NO_WARNINGS -I..\\..\\..\\labhelper -I..\\..\\..\\external_src\\stb-master -I..\\..\\..\\external_src\\tinyobjloader-1.0.6 -I..\\..\\..\\external\\sdl2\\include -I..\\..\\..\\external\\glm\\include -I..\\..\\..\\external\\glew\\include -I..\\..\\..\\external_src\\imgui-1.51 /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1 /Foproject\\CMakeFiles\\project.dir\\ParticleSystem.cpp.obj /FdTARGET_COMPILE_PDB /FS -c C:\\Dev\\tda362-labs\\project\\ParticleSystem.cpp",
+  "file": "C:/Dev/tda362-labs/project/ParticleSystem.cpp"
+}
+]
