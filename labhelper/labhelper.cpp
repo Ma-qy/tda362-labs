@@ -584,6 +584,11 @@ GLuint loadComputeShader(const std::string& computeShaderPath, bool allow_errors
 
 
 	std::ifstream cs_file(computeShaderPath);
+
+	if (!cs_file) {
+		std::cerr << "Error opening compute shader file." << std::endl;
+	}
+
 	std::string cs_src((std::istreambuf_iterator<char>(cs_file)), std::istreambuf_iterator<char>());
 	std::cout << cs_src << std::endl;
 
