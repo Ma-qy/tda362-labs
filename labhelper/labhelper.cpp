@@ -515,6 +515,8 @@ GLuint loadShaderProgram(const std::string& vertexShader, const std::string& fra
 
 	std::ifstream vs_file(vertexShader);
 	std::string vs_src((std::istreambuf_iterator<char>(vs_file)), std::istreambuf_iterator<char>());
+	
+	//std::cout << vs_src << std::endl;
 
 	std::ifstream fs_file(fragmentShader);
 	std::string fs_src((std::istreambuf_iterator<char>(fs_file)), std::istreambuf_iterator<char>());
@@ -580,11 +582,14 @@ GLuint loadComputeShader(const std::string& computeShaderPath, bool allow_errors
 	GLuint cShader = glCreateShader(GL_COMPUTE_SHADER);
 	
 
+
 	std::ifstream cs_file(computeShaderPath);
 	std::string cs_src((std::istreambuf_iterator<char>(cs_file)), std::istreambuf_iterator<char>());
-
+	std::cout << cs_src << std::endl;
 
 	const char* cs = cs_src.c_str();
+
+	
 
 	glShaderSource(cShader, 1, &cs, nullptr);
 

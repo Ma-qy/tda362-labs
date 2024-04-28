@@ -1,0 +1,34 @@
+#version 430 core
+
+layout (local_size_x = 16, local_size_y = 1, local_size_z = 1) in;
+
+
+struct Particle {
+    vec4 position;  
+    vec4 velocity;  
+    vec4 color;     
+    float lifetime;
+    float size;    
+    float padding[2]; 
+};
+
+
+layout(std430, binding = 0) buffer ParticleBuffer {
+    Particle particles[];
+};
+
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    if (idx >= particles.length()) return;
+
+    Particle p = particles[idx];
+    p.position.xyz += p.velocity.xyz * 0.01; // Move particle
+    p.lifetime -= 0.01; // Decrease lifetime
+    if (p.lifetime < 0.0) {
+        // Reset particle
+        p.position = vec4(0.0, 0.0, 0.0, 1.0);
+        p.lifetime = 1.0; // Reset lifetime
+    }
+    particles[idx] = p;
+}

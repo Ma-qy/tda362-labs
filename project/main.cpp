@@ -171,11 +171,11 @@ void loadShaders(bool is_reload)
 		particleProgram = shader;
 	}
 
-	/*shader = labhelper::loadComputeShader("../project/particle.comp", is_reload);
+	shader = labhelper::loadComputeShader("../project/particle.comp", is_reload);
 	if (shader != 0)
 	{
 		computeProgram = shader;
-	}*/
+	}
 
 }
 
@@ -263,10 +263,11 @@ void drawParticles(const glm::mat4& viewMatrix, const glm::mat4& projectionMatri
 										projectionMatrix * viewMatrix);
 
 
-	/*glDispatchCompute(1024 / 1024, 1, 1);
+	
 	glUseProgram(computeProgram);
+	glDispatchCompute(1024 / 16, 1, 1);
 
-	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);*/
+	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	
 	glDrawArrays(GL_POINTS, 0, 1024);
 }
