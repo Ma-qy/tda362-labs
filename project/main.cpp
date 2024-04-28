@@ -114,7 +114,7 @@ std::vector<Particle> initParticleData(int numParticles) {
 		p.velocity = glm::vec4(static_cast<float>(rand()) / RAND_MAX * 2.0f - 1.0f, static_cast<float>(rand()) / RAND_MAX * 2.0f - 1.0f, static_cast<float>(rand()) / RAND_MAX * 2.0f - 1.0f, 0.0f);
 
 		p.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f); 
-		p.lifetime = static_cast<float>(rand()) / RAND_MAX * 5.0f; // Up to 5 seconds
+		p.lifetime = static_cast<float>(rand()) / RAND_MAX * 500.0f; // Up to 5 seconds
 		p.size = 1.0f; // Default size
 	}
 	return particles;
@@ -171,7 +171,7 @@ void loadShaders(bool is_reload)
 		particleProgram = shader;
 	}
 
-	shader = labhelper::loadComputeShader("../project/particle.comp", is_reload);
+	shader = labhelper::loadComputeShader("../project/particleUpdate.comp", is_reload);
 	if (shader != 0)
 	{
 		computeProgram = shader;
@@ -257,18 +257,16 @@ void drawParticles(const glm::mat4& viewMatrix, const glm::mat4& projectionMatri
 	glBindVertexArray(ParVAO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
 
+	glUseProgram(computeProgram);
+	glDispatchCompute(1024 / 256, 1, 1);
 	
+
+	//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	glUseProgram(particleProgram);
 	labhelper::setUniformSlow(particleProgram, "modelViewProjectionMatrix",
-										projectionMatrix * viewMatrix);
+		projectionMatrix * viewMatrix);
 
 
-	
-	glUseProgram(computeProgram);
-	glDispatchCompute(1024 / 16, 1, 1);
-
-	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-	
 	glDrawArrays(GL_POINTS, 0, 1024);
 }
 

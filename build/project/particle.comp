@@ -22,13 +22,5 @@ void main() {
     uint idx = gl_GlobalInvocationID.x;
     if (idx >= particles.length()) return;
 
-    Particle p = particles[idx];
-    p.position.xyz += p.velocity.xyz * 0.01; // Move particle
-    p.lifetime -= 0.01; // Decrease lifetime
-    if (p.lifetime < 0.0) {
-        // Reset particle
-        p.position = vec4(0.0, 0.0, 0.0, 1.0);
-        p.lifetime = 1.0; // Reset lifetime
-    }
-    particles[idx] = p;
+    
 }
