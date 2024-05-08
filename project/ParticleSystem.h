@@ -1,50 +1,73 @@
 #pragma once
 
-#include <GL/glew.h>
+#include <glm/glm.hpp>
+#include "Parameter3d.h"
 #include <vector>
-#include <glm/detail/type_vec3.hpp>
-#include <glm/mat4x4.hpp>
+#include "WCubicSpline.h"
 
-struct Particle
-{
-	glm::vec3 pos;
-	glm::vec3 velocity;
-	float lifetime;
-	float life_length;
-};
+namespace Fluid3d {
+    struct ParticleInfo3d
+    {
+        alignas(16) glm::vec3 position;
+        alignas(16) glm::vec3 velocity;
+        alignas(16) glm::vec3 accleration;
+        alignas(4) float_t density;
+        alignas(4) float_t pressure;
+        alignas(4) float_t pressDivDensity;
+        alignas(4) uint32_t blockId;
+    };
 
-class ParticleSystem
-{
-public:
-	/// Allocates the gpu buffer to hold up to `capacity` particles and the corresponding vao
-	explicit ParticleSystem(int capacity);
+    struct NeighborInfo
+    {
+        alignas(16) glm::vec3 radius;
+        alignas(4) float_t distance;
+        alignas(4) int32_t neighborId;
+    };
 
-	/// Clean up the gpu structures created in the constructor
-	~ParticleSystem();
 
-	void init_gpu_data();
+    ///////////////////////////
+    // Core Particle class
+    ///////////////////////////
+    class ParticleSystem 
+    {
+    public:
+        // particle
+        float mSupportRadius = Para3d::supportRadius;  // 支撑半径
+        float mSupportRadiusSquare = mSupportRadius * mSupportRadius; // 支撑半径的平方
+        float mParticalRadius = Para3d::particalRadius;   // 粒子半径
+        float mParticalDiameter = Para3d::particalDiameter;  // 粒子直径
+        
+        float mVolume = std::pow(mParticalRadius, 3);   // 体积
+        float mMass = Para3d::density0 * mVolume;  // 质量
+        float mViscosity = Para3d::viscosity;      // 粘度系数
+        float mExponent = Para3d::exponent;        // 压力指数
+        int mStiffness = Para3d::stiffness;        // 刚度
+        std::vector<ParticleInfo3d> mParticalInfos;
+        int mMaxNeighbors = 512;
 
-	/// Creates a new particle if there less than `max_size` elements in the particles array buffer
-	void spawn(Particle particle);
 
-	/// Updates all the particles' positions depending on their speed, their lifetimes, and kills any
-	/// that are past their life_length
-	void process_particles(float dt);
+        //container(boundaries)
+        glm::vec3 mLowerBound = glm::vec3(FLT_MAX);
+        glm::vec3 mUpperBound = glm::vec3(-FLT_MAX);
+        glm::vec3 mContainerCenter = glm::vec3(0.0f);
+        glm::uvec3 mBlockNum = glm::uvec3(0);    // XYZ轴有几个block
+        glm::vec3 mBlockSize = glm::vec3(0.0f);
+        std::vector<glm::uvec2> mBlockExtens;
+        std::vector<int32_t> mBlockIdOffs;
 
-	/// Updates the vertex buffer with the current particle properties, and renders them
-	void submit_to_gpu(const glm::mat4& viewMat);
 
-private:
-	/// Deletes a particle at position `id` by swapping it with the last
-	/// particle in the array and reducing the size by 1.
-	/// (Care with indexes, as this can change the particle an index refers to)
-	void kill(int id);
+        //cubic spline function
+        Glb::WCubicSpline3d mW = Glb::WCubicSpline3d(mSupportRadius);
 
-	// Members
-	std::vector<Particle> particles;
-	int max_size;
 
-	GLuint gl_vao = 0;
-	GLuint gl_buffer = 0;
-	std::vector<glm::vec4> gl_data_temp_buffer;
-};
+    public:
+        ParticleSystem();
+        ~ParticleSystem();
+
+        void SetContainerSize(glm::vec3 corner, glm::vec3 size);
+        int32_t AddFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particalSpace);
+        uint32_t GetBlockIdByPosition(glm::vec3 position);
+        void UpdateData();
+    };
+    
+}

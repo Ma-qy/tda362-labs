@@ -2,6 +2,7 @@
 extern "C" _declspec(dllexport) unsigned int NvOptimusEnablement = 0x00000001;
 #endif
 
+#include <iostream>
 #include <GL/glew.h>
 #include <cmath>
 #include <cstdlib>
@@ -19,6 +20,9 @@ using namespace glm;
 #include <Model.h>
 #include "hdr.h"
 #include "fbo.h"
+
+
+#include "ParticleSystem.h"
 
 using std::min;
 using std::max;
@@ -92,6 +96,7 @@ float shipSpeed = 50;
 GLuint ParVAO;
 GLuint ssbo;
 
+/*
 struct Particle {
 	glm::vec4 position;  // Position and w can be used for homogenous coordinates or additional data
 	glm::vec4 velocity;  // Velocity and extra control data
@@ -135,6 +140,8 @@ GLuint createParticleBuffer(const std::vector<Particle>& particles) {
 	
 	return particle_vao;
 }
+*/
+
 
 
 
@@ -179,6 +186,25 @@ void loadShaders(bool is_reload)
 
 }
 
+
+//////////////////////////////////////////////////////////
+/// New Method : Particle System
+///////////////////////////////////////////////////////////
+Fluid3d::ParticleSystem InitialParticleSystem()
+{
+	Fluid3d::ParticleSystem ps;
+	ps.SetContainerSize(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.6, 0.6, 0.6));
+	ps.AddFluidBlock(glm::vec3(0.05, 0.35, 0.25), glm::vec3(0.15, 0.15, 0.3), glm::vec3(0.0, 0.0, -3.0), 0.01 * 0.8);
+	ps.AddFluidBlock(glm::vec3(0.35, 0.05, 0.25), glm::vec3(0.15, 0.15, 0.3), glm::vec3(0.0, 0.0, -3.0), 0.01 * 0.8);
+	ps.UpdateData();
+	std::cout << "partical num = " << ps.mParticalInfos.size() << std::endl;
+	return ps;
+}
+
+
+//TODO: Handle Renderer for particles
+
+
 ///////////////////////////////////////////////////////////////////////////////
 /// This function is called once at the start of the program and never again
 ///////////////////////////////////////////////////////////////////////////////
@@ -213,12 +239,13 @@ void initialize()
 	irradianceMap = labhelper::loadHdrTexture("../scenes/envmaps/" + envmap_base_name + "_irradiance.hdr");
 	reflectionMap = labhelper::loadHdrMipmapTexture(filenames);
 
-	////////////////////////
+	///////////////////////////////////////////////////////////////////////
 	/// initial particles
-	////////////////////////
-	std::vector<Particle> myParticles = initParticleData(1024);
-	ParVAO = createParticleBuffer(myParticles);
+	/////////////////////////////////////////////////////////////////////////
+	//std::vector<Particle> myParticles = initParticleData(1024);
+	//ParVAO = createParticleBuffer(myParticles);
 
+	Fluid3d::ParticleSystem ps = InitialParticleSystem();
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_DEPTH_TEST); // enable Z-buffering
