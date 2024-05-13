@@ -13,9 +13,9 @@ namespace Para3d {
     const float particalDiameter = particalRadius * 2.0;
     const float gravity = 9.8f;
     const float density0 = 1000.0f;
-    const float stiffness = 5.0f;
+    const float stiffness = 8.0f;
     const float exponent = 7.0f;
-    const float viscosity = 8e-6f;
+    const float viscosity = 8e-7f;
 
     // 光学参数
     const float IOR = 1.3;
