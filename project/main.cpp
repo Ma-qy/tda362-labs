@@ -23,6 +23,7 @@ using namespace glm;
 
 
 #include "ParticleSystem.h"
+#include "RenderWidget.h"
 
 using std::min;
 using std::max;
@@ -73,7 +74,7 @@ float point_light_intensity_multiplier = 10000.0f;
 ///////////////////////////////////////////////////////////////////////////////
 vec3 cameraPosition(-70.0f, 50.0f, 70.0f);
 vec3 cameraDirection = normalize(vec3(0.0f) - cameraPosition);
-float cameraSpeed = 10.f;
+float cameraSpeed = 20.f;
 
 vec3 worldUp(0.0f, 1.0f, 0.0f);
 
@@ -95,6 +96,10 @@ float shipSpeed = 50;
 ////////////////////////////////
 GLuint ParVAO;
 GLuint ssbo;
+
+
+Fluid3d::ParticleSystem ps;
+Fluid3d::RenderWidget renderer;
 
 /*
 struct Particle {
@@ -245,7 +250,9 @@ void initialize()
 	//std::vector<Particle> myParticles = initParticleData(1024);
 	//ParVAO = createParticleBuffer(myParticles);
 
-	Fluid3d::ParticleSystem ps = InitialParticleSystem();
+	ps = InitialParticleSystem();
+	renderer.Init();
+	renderer.UploadUniforms(ps);
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_DEPTH_TEST); // enable Z-buffering
@@ -279,23 +286,23 @@ void drawBackground(const mat4& viewMatrix, const mat4& projectionMatrix)
 /// <summary>
 /// mqy: draw particles
 /// </summary>
-void drawParticles(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
-{
-	glBindVertexArray(ParVAO);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
-
-	glUseProgram(computeProgram);
-	glDispatchCompute(1024 / 256, 1, 1);
-	
-
-	//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-	glUseProgram(particleProgram);
-	labhelper::setUniformSlow(particleProgram, "modelViewProjectionMatrix",
-		projectionMatrix * viewMatrix);
-
-
-	glDrawArrays(GL_POINTS, 0, 1024);
-}
+//void drawParticles(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
+//{
+//	glBindVertexArray(ParVAO);
+//	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+//
+//	glUseProgram(computeProgram);
+//	glDispatchCompute(1024 / 256, 1, 1);
+//	
+//
+//	//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+//	glUseProgram(particleProgram);
+//	labhelper::setUniformSlow(particleProgram, "modelViewProjectionMatrix",
+//		projectionMatrix * viewMatrix);
+//
+//
+//	glDrawArrays(GL_POINTS, 0, 1024);
+//}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -367,8 +374,9 @@ void display(void)
 	///////////////////////////////////////////////////////////////////////////
 	// setup matrices
 	///////////////////////////////////////////////////////////////////////////
-	mat4 projMatrix = perspective(radians(45.0f), float(windowWidth) / float(windowHeight), 5.0f, 2000.0f);
-	mat4 viewMatrix = lookAt(cameraPosition, cameraPosition + cameraDirection, worldUp);
+	mat4 projMatrix = perspective(radians(60.0f), float(windowWidth) / float(windowHeight), 0.1f, 100.0f);
+	//mat4 viewMatrix = lookAt(cameraPosition, cameraPosition + cameraDirection, worldUp);
+	mat4 viewMatrix = lookAt(glm::vec3(0.3, 0.35, 0.15)-cameraDirection, glm::vec3(0.3, 0.35, 0.15), worldUp);
 
 	vec4 lightStartPosition = vec4(40.0f, 40.0f, 0.0f, 1.0f);
 	lightPosition = vec3(rotate(currentTime, worldUp) * lightStartPosition);
@@ -401,8 +409,15 @@ void display(void)
 	debugDrawLight(viewMatrix, projMatrix, vec3(lightPosition));
 
 
-	drawParticles(viewMatrix, projMatrix);
+	// drawParticles(viewMatrix, projMatrix);
 
+	for (int i = 0; i < Para3d::substep; i++) {
+		ps.UpdateData();
+		renderer.UploadParticleInfo(ps);
+		renderer.SolveParticals();
+		renderer.DumpParticleInfo(ps);
+	}
+	renderer.Update(viewMatrix, projMatrix);
 }
 
 

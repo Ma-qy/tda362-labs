@@ -2,6 +2,8 @@
 #include "ParticleSystem.h"
 #include "Global.h"
 
+#include <cstdint>  // For std::uint64_t
+
 namespace Fluid3d
 {
 	ParticleSystem::ParticleSystem()
@@ -28,7 +30,7 @@ namespace Fluid3d
 		mBlockSize = glm::vec3(size.x / mBlockNum.x, size.y / mBlockNum.y, size.z / mBlockNum.z);
 
 
-		//计算索引偏移量，分成27个块，每个方向三个块
+		//计算索引偏移量, 方便寻找邻居时调用，邻居每个方向三个块
 		mBlockIdOffs.resize(27);
 		int p = 0;
 		//k是在z方向上的偏移，j是在y方向的偏移，i是在x方向的偏移
@@ -61,6 +63,7 @@ namespace Fluid3d
 
 		//particleSpace 是粒子间的初始间距 防止粒子发生重叠
 		glm::uvec3 particalNum = glm::uvec3(size.x / particalSpace, size.y / particalSpace, size.z / particalSpace);
+
 		std::vector<ParticleInfo3d > particals(particalNum.x * particalNum.y * particalNum.z);
 
 		Glb::RandomGenerator rand;

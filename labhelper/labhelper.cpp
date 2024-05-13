@@ -721,11 +721,17 @@ void setUniformSlow(GLuint shaderProgram, const char* name, const bool value)
 }
 void setUniformSlow(GLuint shaderProgram, const char* name, const glm::vec3& value)
 {
-	glUniform3fv(glGetUniformLocation(shaderProgram, name), 1, &value.x);
+	glUniform3fv(glGetUniformLocation(shaderProgram, name), 1, &value[0]);
 }
 void setUniformSlow(GLuint shaderProgram, const char* name, const uint32_t nof_values, const glm::vec3* values)
 {
 	glUniform3fv(glGetUniformLocation(shaderProgram, name), nof_values, (float*)values);
+}
+
+//new added
+void setUniformSlow(GLuint shaderProgram, const char* name, const glm::uvec3& values)
+{
+	glUniform3uiv(glGetUniformLocation(shaderProgram, name), 1, &values[0]);
 }
 
 void debugDrawArrow(const glm::mat4& viewMat, const glm::mat4& projMat, glm::vec3 start, glm::vec3 point)
