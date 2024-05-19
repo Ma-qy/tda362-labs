@@ -1,9 +1,16 @@
 #pragma once
+
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include "ParticleSystem.h"
 
+#include "Material.h"
+#include "ParticleSystem.h"
+#include "DepthFilter.h"
+#include "FluidShadowMap.h"
+#include "SkyBox.h"
+#include "RenderCamera.h"
 
 
 namespace Fluid3d {
@@ -11,14 +18,28 @@ namespace Fluid3d {
 	{
 	private:
 		// window
-		
+		GLFWwindow* mWindow = nullptr;
 		int mWindowWidth = 1000;
 		int mWindowHeight = 1000;
+
+		// camera
+		RenderCamera mCamera;
+		bool mFirstMouseFlag = true;
+		float mLastX;
+		float mLastY;
+		bool mLeftPressFlag = false;
+		bool mRightPressFlag = false;
+		bool mMiddlePressFlag = false;
+		bool mPauseFlag = false;
 
 		// shaders
 		GLuint mComputeShaderProgram;
 		GLuint mScreenQuadShaderProgram;
 		GLuint mDrawColorShaderProgram;
+		GLuint mPointZShaderProgram;
+		GLuint mThicknessShaderProgram;
+		GLuint mFluidColorShaderProgram;
+		GLuint mModelShaderProgram;
 
 		// fbo
 		GLuint mFboDepth = 0;
@@ -52,13 +73,22 @@ namespace Fluid3d {
 		float_t updateTitleTime = 0.0f;
 		float_t frameCount = 0.0f;
 		
-		bool mPauseFlag = false;
+		
+		DepthFilter* mDepthFilter;
 
 
+		Material* mSlabWhite = nullptr;
+		FluidShadowMap* mShadowMap = nullptr;
+		PointLight mLight;
+		SkyBox* mSkyBox = nullptr;
 
+		glm::vec3 mExternelAccleration = { 0.0, 0.0, 0.0 };
+		
 	public:
 		RenderWidget();
 		~RenderWidget();
+
+		bool CreateWindow();
 
 		void Init();
 
@@ -69,7 +99,12 @@ namespace Fluid3d {
 
 		// 求解、渲染
 		void SolveParticals();
-		void Update(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+		void Update();
+
+		// window
+		bool ShouldClose();
+		void ProcessInput();
+		void PollEvents();
 
 	private:
 		void BuildShaders();
@@ -80,6 +115,15 @@ namespace Fluid3d {
 		void CreateRenderAssets();
 		void MakeVertexArrays(); // 生成画粒子的vao
 
-		void DrawParticles(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+		void DrawParticles();
+		void LoadSkyBox();
+
+		static void ResizeCallback(GLFWwindow* window, int width, int height);
+		static void CursorPosCallBack(GLFWwindow* window, double xpos, double ypos);
+		static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+		static void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+		static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
 	};
+
+
 }

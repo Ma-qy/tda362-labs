@@ -10,7 +10,7 @@
 #endif // WIN32
 
 #include <GL/glew.h>
-
+#include <GL/GLU.h>
 // STB_IMAGE for loading images of many filetypes
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -38,6 +38,7 @@
 #include <glm/glm.hpp>
 #include <imgui.h>
 #include "imgui_impl_sdl_gl3.h"
+
 
 //#define HDR_FRAMEBUFFER
 
@@ -575,6 +576,103 @@ GLuint loadShaderProgram(const std::string& vertexShader, const std::string& fra
 	return shaderProgram;
 }
 
+
+/// <summary>
+/// new added for load geo shader
+/// </summary>
+GLuint loadShaderProgram(const std::string& vertexShader, const std::string& fragmentShader, const std::string& geomShader, bool allow_errors)
+{
+	GLuint vShader = glCreateShader(GL_VERTEX_SHADER);
+	GLuint fShader = glCreateShader(GL_FRAGMENT_SHADER);
+	GLuint gShader = glCreateShader(GL_GEOMETRY_SHADER);
+
+	std::ifstream vs_file(vertexShader);
+	std::string vs_src((std::istreambuf_iterator<char>(vs_file)), std::istreambuf_iterator<char>());
+
+	//std::cout << vs_src << std::endl;
+
+	std::ifstream fs_file(fragmentShader);
+	std::string fs_src((std::istreambuf_iterator<char>(fs_file)), std::istreambuf_iterator<char>());
+
+	std::ifstream gs_file(geomShader);
+	std::string gs_src((std::istreambuf_iterator<char>(gs_file)), std::istreambuf_iterator<char>());
+
+	const char* vs = vs_src.c_str();
+	const char* fs = fs_src.c_str();
+	const char* gs = gs_src.c_str();
+
+	glShaderSource(vShader, 1, &vs, nullptr);
+	glShaderSource(fShader, 1, &fs, nullptr);
+	glShaderSource(gShader, 1, &gs, nullptr);
+	// text data is not needed beyond this point
+
+	glCompileShader(vShader);
+	int compileOk = 0;
+	glGetShaderiv(vShader, GL_COMPILE_STATUS, &compileOk);
+	if (!compileOk)
+	{
+		std::string err = GetShaderInfoLog(vShader);
+		if (allow_errors)
+		{
+			non_fatal_error(err, "Vertex Shader");
+		}
+		else
+		{
+			fatal_error(err, "Vertex Shader");
+		}
+		return 0;
+	}
+
+	glCompileShader(fShader);
+	glGetShaderiv(fShader, GL_COMPILE_STATUS, &compileOk);
+	if (!compileOk)
+	{
+		std::string err = GetShaderInfoLog(fShader);
+		if (allow_errors)
+		{
+			non_fatal_error(err, "Fragment Shader");
+		}
+		else
+		{
+			fatal_error(err, "Fragment Shader");
+		}
+		return 0;
+	}
+
+	glCompileShader(gShader);
+	glGetShaderiv(gShader, GL_COMPILE_STATUS, &compileOk);
+	if (!compileOk)
+	{
+		std::string err = GetShaderInfoLog(gShader);
+		if (allow_errors)
+		{
+			non_fatal_error(err, "Geometry Shader");
+		}
+		else
+		{
+			fatal_error(err, "Geometry Shader");
+		}
+		return 0;
+	}
+
+
+
+	GLuint shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, fShader);
+	glDeleteShader(fShader);
+	glAttachShader(shaderProgram, vShader);
+	glDeleteShader(vShader);
+	glAttachShader(shaderProgram, gShader);
+	glDeleteShader(gShader);
+	if (!allow_errors)
+		CHECK_GL_ERROR();
+
+	if (!linkShaderProgram(shaderProgram, allow_errors))
+		return 0;
+
+	return shaderProgram;
+}
+
 /////////////////////////////
 ///mqy: load compute shader
 /////////////////////////////
@@ -590,7 +688,7 @@ GLuint loadComputeShader(const std::string& computeShaderPath, bool allow_errors
 	}
 
 	std::string cs_src((std::istreambuf_iterator<char>(cs_file)), std::istreambuf_iterator<char>());
-	std::cout << cs_src << std::endl;
+	//std::cout << cs_src << std::endl;
 
 	const char* cs = cs_src.c_str();
 

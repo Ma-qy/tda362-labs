@@ -4,7 +4,7 @@
 
 namespace Para3d {
     // 求解器参数
-    const float dt = 2e-4;
+    const float dt = 2e-6;
     const int substep = 8;
 
     // 物理参数
@@ -27,6 +27,6 @@ namespace Para3d {
     const float THICKNESS_FACTOR = 0.5;
 
     // 几何参数
-    const float zFar = 100.0;
-    const float zNear = 0.1;
+    const float zFar = 100.0f;
+    const float zNear = 0.1f;
 }

@@ -58,7 +58,7 @@ namespace Glb {
         }
         // delete the shaders
         glDeleteShader(computeShader);
-        std::cout << "compute shader success mName:" << mName << std::endl;
+        //std::cout << "compute shader success mName:" << mName << std::endl;
 
         return 0;
     }
