@@ -1,0 +1,10 @@
+^C:\USERS\14306\DOCUMENTS\TDA362-LABS\EXTERNAL\GLFW\BUILD\CMAKEFILES\8E31884785DD96062C0669089FAE1624\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/14306/Documents/tda362-labs/external/glfw -BC:/Users/14306/Documents/tda362-labs/external/glfw/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/14306/Documents/tda362-labs/external/glfw/build/GLFW.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

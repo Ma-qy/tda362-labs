@@ -12,6 +12,7 @@ namespace Fluid3d {
 	private:
 		// window
 		
+<<<<<<< Updated upstream
 		int mWindowWidth = 1000;
 		int mWindowHeight = 1000;
 
@@ -19,6 +20,28 @@ namespace Fluid3d {
 		GLuint mComputeShaderProgram;
 		GLuint mScreenQuadShaderProgram;
 		GLuint mDrawColorShaderProgram;
+=======
+		int mWindowWidth = 1280;
+		int mWindowHeight = 720;
+
+		// camera
+		RenderCamera* mCamera;
+		bool mFirstMouseFlag = true;
+	
+		bool mLeftPressFlag = false;
+		bool mRightPressFlag = false;
+		bool mMiddlePressFlag = false;
+		bool mPauseFlag = false;
+
+		// shaders
+		GLuint mComputeShaderProgram = 0;
+		GLuint mScreenQuadShaderProgram = 0;
+		GLuint mDrawColorShaderProgram = 0;
+		GLuint mPointZShaderProgram = 0;
+		GLuint mThicknessShaderProgram= 0;
+		GLuint mFluidColorShaderProgram = 0;
+		GLuint mModelShaderProgram = 0;
+>>>>>>> Stashed changes
 
 		// fbo
 		GLuint mFboDepth = 0;
@@ -57,7 +80,7 @@ namespace Fluid3d {
 
 
 	public:
-		RenderWidget();
+		RenderWidget(RenderCamera* camera);
 		~RenderWidget();
 
 		void Init();
@@ -80,6 +103,17 @@ namespace Fluid3d {
 		void CreateRenderAssets();
 		void MakeVertexArrays(); // 生成画粒子的vao
 
+<<<<<<< Updated upstream
 		void DrawParticles(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
+=======
+		void DrawParticles();
+		void LoadSkyBox();
+
+		/*static void ResizeCallback(int width, int height);
+		static void CursorPosCallBack(double xpos, double ypos);
+		static void MouseButtonCallback(Uint8 button, Uint8 state);
+		static void ScrollCallback(double xoffset, double yoffset);
+		static void KeyCallback(int key, int scancode, int action, int mode);*/
+>>>>>>> Stashed changes
 	};
 }

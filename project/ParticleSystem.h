@@ -41,7 +41,7 @@ namespace Fluid3d {
         float mMass = Para3d::density0 * mVolume;  // 质量
         float mViscosity = Para3d::viscosity;      // 粘度系数
         float mExponent = Para3d::exponent;        // 压力指数
-        int mStiffness = Para3d::stiffness;        // 刚度
+        float mStiffness = Para3d::stiffness;        // 刚度
         std::vector<ParticleInfo3d> mParticalInfos;
         int mMaxNeighbors = 512;
 

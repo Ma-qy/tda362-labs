@@ -7,6 +7,7 @@
 #include <thread>
 #include <vector>
 
+#include <SDL.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <labhelper.h>
@@ -37,11 +38,10 @@ glm::mat4 floorModel;
 
 namespace Fluid3d
 {
-	RenderWidget::RenderWidget()
+	RenderWidget::RenderWidget(RenderCamera* camera)
+		: mCamera(camera)
 	{
-		floorModel = glm::mat4(1.0);
-		floorModel = glm::scale(floorModel, glm::vec3(0.6));
-		floorModel = glm::translate(floorModel, glm::vec3(0.5, 0.5, 0.0));
+		
 	}
 
 	RenderWidget::~RenderWidget()
@@ -52,6 +52,12 @@ namespace Fluid3d
 
 	void RenderWidget::Init()
 	{
+<<<<<<< Updated upstream
+=======
+		floorModel = glm::mat4(1.0);
+		floorModel = glm::scale(floorModel, glm::vec3(0.5));
+		floorModel = glm::translate(floorModel, glm::vec3(0.5, 0.5, 1.2));
+>>>>>>> Stashed changes
 		BuildShaders();
 
 		GenerateFrameBuffers();
@@ -87,6 +93,31 @@ namespace Fluid3d
 
 		mDrawColorShaderProgram = labhelper::loadShaderProgram("../project/DrawColor3d.vert", "../project/DrawColor3d.frag", false);
 		
+<<<<<<< Updated upstream
+=======
+		mPointZShaderProgram = labhelper::loadShaderProgram("../project/PointSprite.vert", "../project/PointSpriteZValue.frag", "../project/PointSprite.geom", false);
+		glUseProgram(mPointZShaderProgram);
+		labhelper::setUniformSlow(mPointZShaderProgram, "zFar", Para3d::zFar);
+		labhelper::setUniformSlow(mPointZShaderProgram, "zNear", Para3d::zNear);
+		glUseProgram(0);
+
+
+		mThicknessShaderProgram = labhelper::loadShaderProgram("../project/PointSprite.vert", "../project/PointSpriteThickness.frag", "../project/PointSprite.geom", false);
+
+		mFluidColorShaderProgram = labhelper::loadShaderProgram("../project/DrawFluidColor.vert", "../project/DrawFluidColor.frag", false);
+		glUseProgram(mFluidColorShaderProgram);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "zFar", Para3d::zFar);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "zNear", Para3d::zNear);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "eta", (float)(1.0f / Para3d::IOR));
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "f0", Para3d::F0);
+		glm::vec4 cin = Glb::ProjToIntrinsic(mCamera->GetProjection(), mWindowWidth, mWindowHeight);
+		glUniform4fv(glGetUniformLocation(mFluidColorShaderProgram, "cameraIntrinsic"), 1, &cin[0]);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "fluidColor", Para3d::FLUID_COLOR);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "thicknessFactor", Para3d::THICKNESS_FACTOR);
+		glUseProgram(0);
+
+		mModelShaderProgram = labhelper::loadShaderProgram("../project/DrawModel.vert", "../project/DrawModel.frag", false);
+>>>>>>> Stashed changes
 
 	}
 
@@ -231,8 +262,8 @@ namespace Fluid3d
 	void RenderWidget::UploadUniforms(Fluid3d::ParticleSystem& ps)
 	{
 		glUseProgram(mComputeShaderProgram);
-		//labhelper::setUniformSlow(mComputeShaderProgram, "blockNum", ps.mBlockNum);
-		glUniform3uiv(glGetUniformLocation(mComputeShaderProgram, "blockNum"), 1, &ps.mBlockNum[0]);
+		labhelper::setUniformSlow(mComputeShaderProgram, "blockNum", ps.mBlockNum);
+		//glUniform3uiv(glGetUniformLocation(mComputeShaderProgram, "blockNum"), 1, &ps.mBlockNum[0]);
 		labhelper::setUniformSlow(mComputeShaderProgram, "blockSize", ps.mBlockSize);
 		labhelper::setUniformSlow(mComputeShaderProgram, "containerLowerBound", ps.mLowerBound);
 		labhelper::setUniformSlow(mComputeShaderProgram, "containerUpperBound", ps.mUpperBound);
@@ -242,9 +273,9 @@ namespace Fluid3d
 		labhelper::setUniformSlow(mComputeShaderProgram, "gDensity0", Para3d::density0);
 		labhelper::setUniformSlow(mComputeShaderProgram, "gVolume", ps.mVolume);
 		labhelper::setUniformSlow(mComputeShaderProgram, "gMass", 0.5f);
-		glUniform1f(glGetUniformLocation(mComputeShaderProgram, "gStiffness"), ps.mStiffness);
-		//labhelper::setUniformSlow(mComputeShaderProgram, "gExponent", ps.mExponent);
-		glUniform1f(glGetUniformLocation(mComputeShaderProgram, "gExponent"), ps.mExponent);
+		labhelper::setUniformSlow(mComputeShaderProgram, "gStiffness", ps.mStiffness);
+		labhelper::setUniformSlow(mComputeShaderProgram, "gExponent", ps.mExponent);
+		
 		labhelper::setUniformSlow(mComputeShaderProgram, "gViscosity", ps.mViscosity);
 		glUseProgram(0);
 		
@@ -293,9 +324,9 @@ namespace Fluid3d
 		labhelper::setUniformSlow(mComputeShaderProgram, "particalNum", mParticalNum);
 		
 		//2 pass in compute shader
-		for (int pass = 0; pass <= 1; pass++) {
+		for (GLuint pass = 0; pass <= 1; pass++) {
 			labhelper::setUniformSlow(mComputeShaderProgram, "pass", pass);
-			glDispatchCompute((GLuint)(mParticalNum / 512), 1, 1);
+			glDispatchCompute(mParticalNum / 512 + 1, 1, 1);
 			glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		}
 		glUseProgram(0);
@@ -310,10 +341,141 @@ namespace Fluid3d
 	{
 		glFinish();
 		//// 以点的形式画粒子
+<<<<<<< Updated upstream
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
+=======
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//
+		//glEnable(GL_DEPTH_TEST);
+		//glDepthFunc(GL_LEQUAL);
+		//
+		//glEnable(GL_PROGRAM_POINT_SIZE);
+		//glUseProgram(mDrawColorShaderProgram);
+		//labhelper::setUniformSlow(mDrawColorShaderProgram, "view", mCamera->GetView());
+		//labhelper::setUniformSlow(mDrawColorShaderProgram, "projection", mCamera->GetProjection());
+		//
+		//
+		//glBindVertexArray(mVaoCoord);
+		//glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, indices);
+		//glBindVertexArray(mVaoParticals);
+		//glDrawArrays(GL_POINTS, 0, mParticalNum);
+		///*mSkyBox->Draw(mWindow, mVaoNull, mCamera->GetView(), mCamera->GetProjection());
+		//mDrawColor3d->UnUse();*/
+
+
+
+		//深度图
+		glBindFramebuffer(GL_FRAMEBUFFER, mFboDepth);
+
+		glViewport(0, 0, mWindowWidth, mWindowHeight);
+		glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+		glEnable(GL_DEPTH_TEST);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+ 		glUseProgram(mPointZShaderProgram);
+		labhelper::setUniformSlow(mPointZShaderProgram, "view", mCamera->GetView());
+		labhelper::setUniformSlow(mPointZShaderProgram, "projection", mCamera->GetProjection());
+		labhelper::setUniformSlow(mPointZShaderProgram, "particalRadius", Para3d::particalRadius);
+		labhelper::setUniformSlow(mPointZShaderProgram, "cameraUp", mCamera->GetUp());
+		labhelper::setUniformSlow(mPointZShaderProgram, "cameraRight", mCamera->GetRight());
+		labhelper::setUniformSlow(mPointZShaderProgram, "cameraFront", mCamera->GetFront());
+		glBindVertexArray(mVaoParticals);
+		glDrawArrays(GL_POINTS, 0, mParticalNum);
+	
+		glUseProgram(0);
+		//
+		//
+
+		//TODO：模糊深度
+		GLuint bufferA = mTexZBuffer;
+		GLuint bufferB = mTexZBlurTempBuffer;
+		mDepthFilter->Filter(bufferA, bufferB, glm::ivec2(mWindowWidth, mWindowHeight));
+
+
+		//画厚度图
+		glBindFramebuffer(GL_FRAMEBUFFER, mFboThickness);
+		
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
+
+		glUseProgram(mThicknessShaderProgram);
+		labhelper::setUniformSlow(mThicknessShaderProgram, "view", mCamera->GetView());
+		labhelper::setUniformSlow(mThicknessShaderProgram, "projection", mCamera->GetProjection());
+		labhelper::setUniformSlow(mThicknessShaderProgram, "particalRadius", Para3d::particalRadius);
+		labhelper::setUniformSlow(mThicknessShaderProgram, "cameraUp", mCamera->GetUp());
+		labhelper::setUniformSlow(mThicknessShaderProgram, "cameraRight", mCamera->GetRight());
+		labhelper::setUniformSlow(mThicknessShaderProgram, "cameraFront", mCamera->GetFront());
+		glBindVertexArray(mVaoParticals);
+		glDrawArrays(GL_POINTS, 0, mParticalNum);
+		glUseProgram(0);
+
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+
+		// 阴影
+		mShadowMap->Update(mVaoParticals, mParticalNum, mDepthFilter);
+
+		// 渲染
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(0, 0, mWindowWidth, mWindowHeight);
+		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		mShadowMap->DrawCaustic(mVaoNull, floorModel);
+
+		// 画地板
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, mShadowMap->GetShadowMap());
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, mShadowMap->GetCausticMap());
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, mSkyBox->GetId());
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, mSlabWhite->mTexAlbedo);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, mSlabWhite->mTexRoughness);
+		glUseProgram(mModelShaderProgram);
+		labhelper::setUniformSlow(mModelShaderProgram, "model", floorModel);
+		labhelper::setUniformSlow(mModelShaderProgram, "view", mCamera->GetView());
+		labhelper::setUniformSlow(mModelShaderProgram, "projection", mCamera->GetProjection());
+		labhelper::setUniformSlow(mModelShaderProgram, "lightView", mShadowMap->mLightView);
+		labhelper::setUniformSlow(mModelShaderProgram, "lightProjection", mShadowMap->mLightProjection);
+		glBindVertexArray(mVaoFloor);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
+		glUseProgram(0);
+
+		// 画流体
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, mSkyBox->GetId());
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, mShadowMap->GetShadowMap());
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, mShadowMap->GetCausticMap());
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, mSlabWhite->mTexAlbedo);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, mSlabWhite->mTexRoughness);
+		glBindImageTexture(0, bufferB, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32F);
+		glBindImageTexture(1, mTexThicknessBuffer, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32F);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, mBufferFloor);
+		glUseProgram(mFluidColorShaderProgram);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "camToWorldRot", glm::transpose(mCamera->GetView()));
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "camToWorld", glm::inverse(mCamera->GetView()));
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "model", floorModel);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "projection", mCamera->GetProjection());
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "lightView", mShadowMap->mLightView);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "lightProjection", mShadowMap->mLightProjection);
+>>>>>>> Stashed changes
 		
 		glEnable(GL_PROGRAM_POINT_SIZE);
 		glUseProgram(mDrawColorShaderProgram);
@@ -324,9 +486,43 @@ namespace Fluid3d
 		glBindVertexArray(mVaoCoord);
 		glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, indices);
 		glBindVertexArray(mVaoParticals);
+<<<<<<< Updated upstream
 		glDrawArrays(GL_POINTS, 0, mParticalNum);
 		/*mSkyBox->Draw(mWindow, mVaoNull, mCamera.GetView(), mCamera.GetProjection());
 		mDrawColor3d->UnUse();*/
 	}
 
+=======
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glBindVertexArray(0);
+		glUseProgram(0);
+
+		//skybox
+		mSkyBox->Draw(mVaoNull,mCamera->GetView(), mCamera->GetProjection());
+		
+	}
+
+	void RenderWidget::LoadSkyBox()
+	{
+		mSkyBox = new SkyBox();
+		mSkyBox->Create();
+		std::vector<std::string> paths
+		{
+			"../scenes/skybox/right.jpg",
+			"../scenes/skybox/left.jpg",
+			
+			"../scenes/skybox/bottom.jpg",
+			"../scenes/skybox/top.jpg",
+			"../scenes/skybox/front.jpg",
+			"../scenes/skybox/back.jpg"
+		};
+		mSkyBox->LoadImages(paths);
+		mSkyBox->BuildShader();
+	}
+
+
+
+
+	
+>>>>>>> Stashed changes
 }

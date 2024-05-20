@@ -8,14 +8,14 @@ namespace Para3d {
     const int substep = 8;
 
     // 物理参数
-    const float supportRadius = 0.025;
+    const float supportRadius = 0.030;
     const float particalRadius = 0.005;
     const float particalDiameter = particalRadius * 2.0;
     const float gravity = 9.8f;
     const float density0 = 1000.0f;
-    const float stiffness = 8.0f;
+    const float stiffness = 5.0f;
     const float exponent = 7.0f;
-    const float viscosity = 8e-7f;
+    const float viscosity = 1e-6f;
 
     // 光学参数
     const float IOR = 1.3;

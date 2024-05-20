@@ -6,7 +6,7 @@
 
 namespace Glb {
     const float_t EPS = 1e-5;
-    const glm::vec3 Z_AXIS = glm::vec3(0.0, 1.0, 0.0);
+    const glm::vec3 Z_AXIS = glm::vec3(0.0, 0.0, -1.0);
     const glm::vec3 COLOR_GREEN = glm::vec3(0.0, 1.0, 0.0);
     const glm::vec3 COLOR_RED = glm::vec3(1.0, 0.0, 0.0);
     const glm::vec3 COLOR_BLUE = glm::vec3(0.0, 0.0, 1.0);

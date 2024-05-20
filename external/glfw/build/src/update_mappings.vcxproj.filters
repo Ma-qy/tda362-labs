@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\14306\Documents\tda362-labs\external\glfw\build\CMakeFiles\8743c0a4ce2a70b852df3843181c727e\update_mappings.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\14306\Documents\tda362-labs\external\glfw\src\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\14306\Documents\tda362-labs\external\glfw\src\mappings.h.in">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="C:\Users\14306\Documents\tda362-labs\external\glfw\CMake\GenerateMappings.cmake" />
+    <None Include="C:\Users\14306\Documents\tda362-labs\external\glfw\build\src\CMakeFiles\update_mappings" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{69683509-8FD4-3CD3-8508-FA826C1EA53E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{5B80294B-7680-396A-B780-56F777DB1CCD}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
