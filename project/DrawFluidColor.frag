@@ -208,7 +208,7 @@ HitResult IntesectAllTriangles(Ray ray) {
     return minRes;
 }
 
-// ------------��Ӱ��غ���--------------
+// ------------阴影相关函数--------------
 vec2 NdcToTexCoord(vec2 NdcXy) {
     // [-1, 1] -> [0, 1]
     return NdcXy * 0.5 + vec2(0.5);
@@ -229,17 +229,17 @@ float Pcf(vec2 texCoord, float fragDist) {
 }
 
 vec3 ShadeFloorWithShadow(vec3 originColor, vec3 lightPos, vec3 curPosition) {
-    // ͶӰ����Դ��ȡ��������
+    // 投影到光源，取纹理坐标
     vec4 fragNDC = lightProjection * lightView * model * vec4(curPosition, 1.0);
     fragNDC /= fragNDC.w;
     vec2 texCoord = NdcToTexCoord(fragNDC.xy);
 
-    // PCF��������Ӱ
+    // PCF法计算阴影
     float fragDist = distance(lightPos, curPosition);
     float shadowFactor = 0.2 * Pcf(texCoord, fragDist);
     vec3 colorWithShadow = mix(originColor, shadowColor, shadowFactor);
 
-    // ���ӽ�ɢ
+    // 添加焦散
     vec3 caustic = texture(causticMap, texCoord).xyz;
 
     return colorWithShadow + caustic;
@@ -260,7 +260,7 @@ vec3 GetRayTraceColor(Ray ray, vec3 fragPosition, vec3 viewPosition) {
     return vec3(0.0);
 }
 
-// beer����
+// beer定律
 float TransparentFactor(float thickness) {
     return max(exp(-thicknessFactor * thickness), 0.2);
 }
@@ -277,16 +277,16 @@ void main()
         discard;
     }
 
-    // д�����
+    // 写入深度
     gl_FragDepth = ZToDepth(curDepth);
 
     vec4 camearOrigin = camToWorld * vec4(0.0, 0.0, 0.0, 1.0);
 
-    // ����λ��
+    // 计算位置
     vec3 curPos = Reproject(curDepth, curPixelId);
     vec4 curPoseOnWorld = camToWorld * vec4(curPos, 1.0);
 
-    // �����������
+    // 计算各种向量
     vec4 normal = vec4(CalculateNormal(curPixelId, curDepth, curPos), 1.0);
     vec4 normalOnWorld = camToWorldRot * normal;
     vec3 wiOnCamera = imageCoordToWi(cameraIntrinsic, curPixelId);
@@ -297,24 +297,25 @@ void main()
 
     mat4 worldToModel = inverse(model);
 
-    // ������ɫ
-    Ray refractRay;     // ģ�;ֲ�����ϵ��
+    // 折射颜色
+    Ray refractRay;     // 模型局部坐标系下
     refractRay.origin = (worldToModel * curPoseOnWorld).xyz;
     refractRay.direction = mat3(worldToModel) * woRefract;
     vec3 refractColor = GetRayTraceColor(refractRay, curPoseOnWorld.xyz, camearOrigin.xyz);
 
-    float thickness = imageLoad(thicknessBuffer, curPixelId).x;
-    float transparentFactor = TransparentFactor(thickness * 2.0);
-    refractColor = refractColor;
+//    float thickness = imageLoad(thicknessBuffer, curPixelId).x;
+//    float transparentFactor = TransparentFactor(thickness * 2.0);
+//    refractColor = transparentFactor * refractColor + (1.0 - transparentFactor) * fluidColor;
 
-    // ������ɫ
+    // 反射颜色
     Ray reflectRay;
     reflectRay.origin = (worldToModel * curPoseOnWorld).xyz;
     reflectRay.direction = mat3(worldToModel) * woReflect;
     vec3 reflectColor = GetRayTraceColor(reflectRay, curPoseOnWorld.xyz, camearOrigin.xyz);
 
-    // ���
+    // 混合
     vec3 outColor = mix(refractColor, reflectColor, fresnel);
 
     FragColor = vec4(outColor, 1.0);
 }
+

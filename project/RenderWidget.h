@@ -17,24 +17,10 @@ namespace Fluid3d {
 	class RenderWidget
 	{
 	private:
-		// window
-		int mWindowWidth = 1000;
-		int mWindowHeight = 1000;
+		
 
-		// camera
-		RenderCamera mCamera;
-		bool mFirstMouseFlag = true;
-		float mLastX;
-		float mLastY;
-		bool mLeftPressFlag = false;
-		bool mRightPressFlag = false;
-		bool mMiddlePressFlag = false;
-		bool mPauseFlag = false;
-
-		// shaders
-		GLuint mComputeShaderProgram;
-		GLuint mScreenQuadShaderProgram;
-		GLuint mDrawColorShaderProgram;
+		
+	
 
 		int mWindowWidth = 1280;
 		int mWindowHeight = 720;
