@@ -1,5 +1,6 @@
 cmake_minimum_required ( VERSION 3.0.2 )
 
+
 project ( computer-graphics-labs )
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -8,6 +9,7 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo" CACHE STRING "" FOR
 if(UNIX)
     set(OpenGL_GL_PREFERENCE "GLVND")
 endif(UNIX)
+
 
 # For windows we use our bundled binaries.
 if(WIN32)

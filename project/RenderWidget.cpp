@@ -10,6 +10,7 @@
 #include <thread>
 #include <vector>
 
+#include <SDL.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <labhelper.h>
@@ -40,11 +41,10 @@ glm::mat4 floorModel;
 
 namespace Fluid3d
 {
-	RenderWidget::RenderWidget()
+	RenderWidget::RenderWidget(RenderCamera* camera)
+		: mCamera(camera)
 	{
-		floorModel = glm::mat4(1.0);
-		floorModel = glm::scale(floorModel, glm::vec3(0.6));
-		floorModel = glm::translate(floorModel, glm::vec3(0.5, 0.5, 0.0));
+		
 	}
 
 	RenderWidget::~RenderWidget()
@@ -55,7 +55,10 @@ namespace Fluid3d
 
 	void RenderWidget::Init()
 	{
-		
+		floorModel = glm::mat4(1.0);
+		floorModel = glm::scale(floorModel, glm::vec3(0.5));
+		floorModel = glm::translate(floorModel, glm::vec3(0.5, 0.5, 1.2));
+
 		BuildShaders();
 
 		GenerateFrameBuffers();
@@ -65,7 +68,7 @@ namespace Fluid3d
 		InitFilters();
 		LoadSkyBox();
 		CreateRenderAssets();
-		MakeVertexArrays(); // Éú³É»­Á£×ÓµÄvao
+		MakeVertexArrays(); // ï¿½ï¿½ï¿½É»ï¿½ï¿½ï¿½ï¿½Óµï¿½vao
 
 		glGenVertexArrays(1, &mVaoNull);
 		glEnable(GL_MULTISAMPLE);
@@ -95,6 +98,7 @@ namespace Fluid3d
 
 		mDrawColorShaderProgram = labhelper::loadShaderProgram("../project/DrawColor3d.vert", "../project/DrawColor3d.frag", false);
 		
+
 		mPointZShaderProgram = labhelper::loadShaderProgram("../project/PointSprite.vert", "../project/PointSpriteZValue.frag", "../project/PointSprite.geom", false);
 		glUseProgram(mPointZShaderProgram);
 		labhelper::setUniformSlow(mPointZShaderProgram, "zFar", Para3d::zFar);
@@ -105,8 +109,19 @@ namespace Fluid3d
 		mThicknessShaderProgram = labhelper::loadShaderProgram("../project/PointSprite.vert", "../project/PointSpriteThickness.frag", "../project/PointSprite.geom", false);
 
 		mFluidColorShaderProgram = labhelper::loadShaderProgram("../project/DrawFluidColor.vert", "../project/DrawFluidColor.frag", false);
+		glUseProgram(mFluidColorShaderProgram);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "zFar", Para3d::zFar);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "zNear", Para3d::zNear);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "eta", (float)(1.0f / Para3d::IOR));
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "f0", Para3d::F0);
+		glm::vec4 cin = Glb::ProjToIntrinsic(mCamera->GetProjection(), mWindowWidth, mWindowHeight);
+		glUniform4fv(glGetUniformLocation(mFluidColorShaderProgram, "cameraIntrinsic"), 1, &cin[0]);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "fluidColor", Para3d::FLUID_COLOR);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "thicknessFactor", Para3d::THICKNESS_FACTOR);
+		glUseProgram(0);
 
 		mModelShaderProgram = labhelper::loadShaderProgram("../project/DrawModel.vert", "../project/DrawModel.frag", false);
+
 
 	}
 
@@ -123,7 +138,7 @@ namespace Fluid3d
 
 	void RenderWidget::GenerateTextures()
 	{
-		// ²âÊÔÓÃµÄÎÆÀí
+		// ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½
 		glGenTextures(1, &mTestTexture);
 		glBindTexture(GL_TEXTURE_2D, mTestTexture);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -133,7 +148,7 @@ namespace Fluid3d
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 100, 100, 0, GL_RGBA, GL_FLOAT, NULL);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		// ºËº¯ÊýÎÆÀí
+		// ï¿½Ëºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		glGenTextures(1, &mTexKernelBuffer);
 		glBindTexture(GL_TEXTURE_1D, mTexKernelBuffer);
 		glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -142,7 +157,7 @@ namespace Fluid3d
 		glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glBindTexture(GL_TEXTURE_1D, 0);
 
-		// Ä£ºýZºóµÄ×ø±êÍ¼
+		// Ä£ï¿½ï¿½Zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼
 		glGenTextures(1, &mTexZBlurTempBuffer);
 		glBindTexture(GL_TEXTURE_2D, mTexZBlurTempBuffer);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, mWindowWidth, mWindowHeight, 0, GL_RED, GL_FLOAT, NULL);
@@ -153,18 +168,18 @@ namespace Fluid3d
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	//Éú³Éframebuffer Éú³É´æ´¢Éî¶ÈºÍºñ¶ÈÎÆÀí
+	//ï¿½ï¿½ï¿½ï¿½framebuffer ï¿½ï¿½ï¿½É´æ´¢ï¿½ï¿½ÈºÍºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void RenderWidget::GenerateFrameBuffers()
 	{
 		glGenFramebuffers(1, &mFboDepth);
 
-		//Éú³É²¢ÉèÖÃÉî¶ÈÎÆÀí
+		//ï¿½ï¿½ï¿½É²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		glGenTextures(1, &mTexZBuffer);
 		glBindTexture(GL_TEXTURE_2D, mTexZBuffer);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, mWindowWidth, mWindowHeight, 0, GL_RED, GL_FLOAT, NULL);  //³õÊ¼»¯Îªµ¥Í¨µÀ¸¡µãÎÆÀí£¬´óÐ¡Óë´°¿Ú´óÐ¡ÏàÍ¬¡£ÕâÖÖÎÆÀí³£ÓÃÓÚ´æ´¢Éî¶ÈÖµ»òÆäËûµ¥Í¨µÀÊý¾Ý¡£
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  //·ÀÖ¹ÎÆÀí±ßÔµÖØ¸´
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, mWindowWidth, mWindowHeight, 0, GL_RED, GL_FLOAT, NULL);  //ï¿½ï¿½Ê¼ï¿½ï¿½Îªï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ë´°ï¿½Ú´ï¿½Ð¡ï¿½ï¿½Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½Ý¡ï¿½
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  //ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôµï¿½Ø¸ï¿½
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);    //ÎÆÀí¹ýÂË·½Ê½
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë·ï¿½Ê½
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -174,12 +189,12 @@ namespace Fluid3d
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, mWindowWidth, mWindowHeight);
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-		//½«ÎÆÀíºÍäÖÈ¾»º³åÇø¸½¼Óµ½ Framebuffer
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½ Framebuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, mFboDepth);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexZBuffer, 0);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, mRboDepthBuffer);
 
-		//¼ì²é Framebuffer ÍêÕûÐÔ
+		//ï¿½ï¿½ï¿½ Framebuffer ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 			std::cout << "ERROR: mFboDepth is not complete!" << std::endl;
 		}
@@ -216,7 +231,7 @@ namespace Fluid3d
 		std::string roughnessPath = "../scenes/Slab/TexturesCom_Marble_SlabWhite_1K_roughness.png";
 		mSlabWhite->LoadTextures(albedoPath, roughnessPath);
 
-		// µÆ¹â
+		// ï¿½Æ¹ï¿½
 		mLight.pos = glm::vec3(-0.8, -0.8, 2.0);
 		mLight.dir = glm::vec3(0.5, 0.5, -1.0);
 		mLight.aspect = 1.0f;
@@ -234,9 +249,9 @@ namespace Fluid3d
 		glGenVertexArrays(1, &mVaoParticals);
 		glBindVertexArray(mVaoParticals);
 
-		//particle position ÐÅÏ¢°ó¶¨ÔÚ mVaoParticalsµÄ0Î»ÖÃ
+		//particle position ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ mVaoParticalsï¿½ï¿½0Î»ï¿½ï¿½
 		glBindBuffer(GL_ARRAY_BUFFER, mBufferParticals);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(ParticleInfo3d), (void*)offsetof(ParticleInfo3d, position));  //ÕýÈ··ÃÎÊ½á¹¹ÌåÖÐÃ¿¸öÊôÐÔ¡£ÐèÒªÕâ¸öoffset
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(ParticleInfo3d), (void*)offsetof(ParticleInfo3d, position));  //ï¿½ï¿½È·ï¿½ï¿½ï¿½Ê½á¹¹ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Ô¡ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½offset
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(ParticleInfo3d), (void*)offsetof(ParticleInfo3d, density));
 		glEnableVertexAttribArray(1);
@@ -266,8 +281,8 @@ namespace Fluid3d
 	void RenderWidget::UploadUniforms(Fluid3d::ParticleSystem& ps)
 	{
 		glUseProgram(mComputeShaderProgram);
-		//labhelper::setUniformSlow(mComputeShaderProgram, "blockNum", ps.mBlockNum);
-		glUniform3uiv(glGetUniformLocation(mComputeShaderProgram, "blockNum"), 1, &ps.mBlockNum[0]);
+		labhelper::setUniformSlow(mComputeShaderProgram, "blockNum", ps.mBlockNum);
+		//glUniform3uiv(glGetUniformLocation(mComputeShaderProgram, "blockNum"), 1, &ps.mBlockNum[0]);
 		labhelper::setUniformSlow(mComputeShaderProgram, "blockSize", ps.mBlockSize);
 		labhelper::setUniformSlow(mComputeShaderProgram, "containerLowerBound", ps.mLowerBound);
 		labhelper::setUniformSlow(mComputeShaderProgram, "containerUpperBound", ps.mUpperBound);
@@ -277,9 +292,9 @@ namespace Fluid3d
 		labhelper::setUniformSlow(mComputeShaderProgram, "gDensity0", Para3d::density0);
 		labhelper::setUniformSlow(mComputeShaderProgram, "gVolume", ps.mVolume);
 		labhelper::setUniformSlow(mComputeShaderProgram, "gMass", 0.5f);
-		glUniform1f(glGetUniformLocation(mComputeShaderProgram, "gStiffness"), ps.mStiffness);
-		//labhelper::setUniformSlow(mComputeShaderProgram, "gExponent", ps.mExponent);
-		glUniform1f(glGetUniformLocation(mComputeShaderProgram, "gExponent"), ps.mExponent);
+		labhelper::setUniformSlow(mComputeShaderProgram, "gStiffness", ps.mStiffness);
+		labhelper::setUniformSlow(mComputeShaderProgram, "gExponent", ps.mExponent);
+		
 		labhelper::setUniformSlow(mComputeShaderProgram, "gViscosity", ps.mViscosity);
 		glUseProgram(0);
 		
@@ -290,11 +305,11 @@ namespace Fluid3d
 	}
 
 	void RenderWidget::UploadParticleInfo(Fluid3d::ParticleSystem& ps) {
-		// ÉêÇë×°Á£×ÓÐÅÏ¢µÄbuffer
+		// ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½buffer
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, mBufferParticals);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, ps.mParticalInfos.size() * sizeof(ParticleInfo3d), ps.mParticalInfos.data(), GL_DYNAMIC_COPY);
 
-		// ÉêÇëblockÇø¼äbuffer
+		// ï¿½ï¿½ï¿½ï¿½blockï¿½ï¿½ï¿½ï¿½buffer
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, mBufferBlocks);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, ps.mBlockExtens.size() * sizeof(glm::uvec2), ps.mBlockExtens.data(), GL_DYNAMIC_COPY);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
@@ -303,7 +318,7 @@ namespace Fluid3d
 	}
 
 	void RenderWidget::DumpParticleInfo(Fluid3d::ParticleSystem& ps) {
-		// °ÑÁ£×ÓÐÅÏ¢¿½»ØCP
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½CP
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, mBufferParticals);
 		glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, mParticalNum * sizeof(ParticleInfo3d), (void*)ps.mParticalInfos.data());
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
@@ -324,13 +339,13 @@ namespace Fluid3d
 
 		glUseProgram(mComputeShaderProgram);
 		labhelper::setUniformSlow(mComputeShaderProgram, "gGravityDir", -Glb::Z_AXIS);
-		labhelper::setUniformSlow(mComputeShaderProgram, "gExternelAccleration", mExternelAccleration); //ÔÝÊ±²»¿¼ÂÇÊó±ê´øÀ´µÄÍâ²¿¼ÓËÙ¶È
+		labhelper::setUniformSlow(mComputeShaderProgram, "gExternelAccleration", mExternelAccleration); //ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â²¿ï¿½ï¿½ï¿½Ù¶ï¿½
 		labhelper::setUniformSlow(mComputeShaderProgram, "particalNum", mParticalNum);
 		
 		//2 pass in compute shader
-		for (int pass = 0; pass <= 1; pass++) {
+		for (GLuint pass = 0; pass <= 1; pass++) {
 			labhelper::setUniformSlow(mComputeShaderProgram, "pass", pass);
-			glDispatchCompute((GLuint)(mParticalNum / 512), 1, 1);
+			glDispatchCompute(mParticalNum / 512 + 1, 1, 1);
 			glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		}
 		glUseProgram(0);
@@ -344,7 +359,8 @@ namespace Fluid3d
 	void RenderWidget::DrawParticles()
 	{
 		glFinish();
-		//// ÒÔµãµÄÐÎÊ½»­Á£×Ó
+		//// ï¿½Ôµï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		//
 		//glEnable(GL_DEPTH_TEST);
@@ -363,9 +379,7 @@ namespace Fluid3d
 		///*mSkyBox->Draw(mWindow, mVaoNull, mCamera.GetView(), mCamera.GetProjection());
 		//mDrawColor3d->UnUse();*/
 
-
-
-		//Éî¶ÈÍ¼
+		//ï¿½ï¿½ï¿½Í¼
 		glBindFramebuffer(GL_FRAMEBUFFER, mFboDepth);
 
 		glViewport(0, 0, mWindowWidth, mWindowHeight);
@@ -375,12 +389,12 @@ namespace Fluid3d
 
 
  		glUseProgram(mPointZShaderProgram);
-		labhelper::setUniformSlow(mPointZShaderProgram, "view", mCamera.GetView());
-		labhelper::setUniformSlow(mPointZShaderProgram, "projection", mCamera.GetProjection());
+		labhelper::setUniformSlow(mPointZShaderProgram, "view", mCamera->GetView());
+		labhelper::setUniformSlow(mPointZShaderProgram, "projection", mCamera->GetProjection());
 		labhelper::setUniformSlow(mPointZShaderProgram, "particalRadius", Para3d::particalRadius);
-		labhelper::setUniformSlow(mPointZShaderProgram, "cameraUp", mCamera.GetUp());
-		labhelper::setUniformSlow(mPointZShaderProgram, "cameraRight", mCamera.GetRight());
-		labhelper::setUniformSlow(mPointZShaderProgram, "cameraFront", mCamera.GetFront();
+		labhelper::setUniformSlow(mPointZShaderProgram, "cameraUp", mCamera->GetUp());
+		labhelper::setUniformSlow(mPointZShaderProgram, "cameraRight", mCamera->GetRight());
+		labhelper::setUniformSlow(mPointZShaderProgram, "cameraFront", mCamera->GetFront());
 		glBindVertexArray(mVaoParticals);
 		glDrawArrays(GL_POINTS, 0, mParticalNum);
 	
@@ -388,13 +402,116 @@ namespace Fluid3d
 		//
 		//
 
-		//TODO£ºÄ£ºýÉî¶È
+		//TODOï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½
 		GLuint bufferA = mTexZBuffer;
 		GLuint bufferB = mTexZBlurTempBuffer;
 		mDepthFilter->Filter(bufferA, bufferB, glm::ivec2(mWindowWidth, mWindowHeight));
 
 
-		//»­ºñ¶ÈÍ¼
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Í¼
+		glBindFramebuffer(GL_FRAMEBUFFER, mFboThickness);
+		
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
+
+		glUseProgram(mThicknessShaderProgram);
+		labhelper::setUniformSlow(mThicknessShaderProgram, "view", mCamera->GetView());
+		labhelper::setUniformSlow(mThicknessShaderProgram, "projection", mCamera->GetProjection());
+		labhelper::setUniformSlow(mThicknessShaderProgram, "particalRadius", Para3d::particalRadius);
+		labhelper::setUniformSlow(mThicknessShaderProgram, "cameraUp", mCamera->GetUp());
+		labhelper::setUniformSlow(mThicknessShaderProgram, "cameraRight", mCamera->GetRight());
+		labhelper::setUniformSlow(mThicknessShaderProgram, "cameraFront", mCamera->GetFront());
+		glBindVertexArray(mVaoParticals);
+		glDrawArrays(GL_POINTS, 0, mParticalNum);
+		glUseProgram(0);
+
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+
+		// ï¿½ï¿½Ó°
+		mShadowMap->Update(mVaoParticals, mParticalNum, mDepthFilter);
+
+		// ï¿½ï¿½È¾
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(0, 0, mWindowWidth, mWindowHeight);
+		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		mShadowMap->DrawCaustic(mVaoNull, floorModel);
+
+		// ï¿½ï¿½ï¿½Ø°ï¿½
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LESS);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, mShadowMap->GetShadowMap());
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, mShadowMap->GetCausticMap());
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, mSkyBox->GetId());
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, mSlabWhite->mTexAlbedo);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, mSlabWhite->mTexRoughness);
+		glUseProgram(mModelShaderProgram);
+		labhelper::setUniformSlow(mModelShaderProgram, "model", floorModel);
+		labhelper::setUniformSlow(mModelShaderProgram, "view", mCamera->GetView());
+		labhelper::setUniformSlow(mModelShaderProgram, "projection", mCamera->GetProjection());
+		labhelper::setUniformSlow(mModelShaderProgram, "lightView", mShadowMap->mLightView);
+		labhelper::setUniformSlow(mModelShaderProgram, "lightProjection", mShadowMap->mLightProjection);
+		glBindVertexArray(mVaoFloor);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
+		glUseProgram(0);
+
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, mSkyBox->GetId());
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, mShadowMap->GetShadowMap());
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, mShadowMap->GetCausticMap());
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, mSlabWhite->mTexAlbedo);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, mSlabWhite->mTexRoughness);
+		glBindImageTexture(0, bufferB, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32F);
+		glBindImageTexture(1, mTexThicknessBuffer, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32F);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, mBufferFloor);
+		glUseProgram(mFluidColorShaderProgram);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "camToWorldRot", glm::transpose(mCamera->GetView()));
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "camToWorld", glm::inverse(mCamera->GetView()));
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "model", floorModel);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "projection", mCamera->GetProjection());
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "lightView", mShadowMap->mLightView);
+		labhelper::setUniformSlow(mFluidColorShaderProgram, "lightProjection", mShadowMap->mLightProjection);
+		
+		glEnable(GL_PROGRAM_POINT_SIZE);
+		glUseProgram(mDrawColorShaderProgram);
+		labhelper::setUniformSlow(mDrawColorShaderProgram, "view", viewMatrix);
+		labhelper::setUniformSlow(mDrawColorShaderProgram, "projection", projectionMatrix);
+		
+		
+		glBindVertexArray(mVaoCoord);
+		glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, indices);
+
+		glBindVertexArray(mVaoParticals);
+
+		glDrawArrays(GL_POINTS, 0, mParticalNum);
+	
+		glUseProgram(0);
+		//
+		//
+
+		//TODOï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½
+		GLuint bufferA = mTexZBuffer;
+		GLuint bufferB = mTexZBlurTempBuffer;
+		mDepthFilter->Filter(bufferA, bufferB, glm::ivec2(mWindowWidth, mWindowHeight));
+
+
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Í¼
 		glBindFramebuffer(GL_FRAMEBUFFER, mFboThickness);
 		
 		glDisable(GL_DEPTH_TEST);
@@ -415,10 +532,10 @@ namespace Fluid3d
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 
-		// ÒõÓ°
+		// ï¿½ï¿½Ó°
 		mShadowMap->Update(mVaoParticals, mParticalNum, mDepthFilter);
 
-		// äÖÈ¾
+		// ï¿½ï¿½È¾
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, mWindowWidth, mWindowHeight);
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
@@ -452,7 +569,7 @@ namespace Fluid3d
 		glBindVertexArray(0);
 		glUseProgram(0);
 
-		// »­Á÷Ìå
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, mSkyBox->GetId());
 		glActiveTexture(GL_TEXTURE1);
@@ -482,6 +599,7 @@ namespace Fluid3d
 		//skybox
 		mSkyBox->Draw(mVaoNull,mCamera.GetView(), mCamera.GetProjection());
 		
+	
 	}
 
 	void RenderWidget::LoadSkyBox()
@@ -492,146 +610,13 @@ namespace Fluid3d
 		{
 			"../scenes/skybox/right.jpg",
 			"../scenes/skybox/left.jpg",
-			"../scenes/skybox/top.jpg",
+			
 			"../scenes/skybox/bottom.jpg",
+			"../scenes/skybox/top.jpg",
 			"../scenes/skybox/front.jpg",
 			"../scenes/skybox/back.jpg"
 		};
 		mSkyBox->LoadImages(paths);
 		mSkyBox->BuildShader();
-	}
-
-
-
-
-	//window
-	void RenderWidget::ResizeCallback(GLFWwindow* window, int width, int height) {
-		// ÕÒµ½thisÖ¸Õë
-		auto thisPtr = reinterpret_cast<RenderWidget*>(glfwGetWindowUserPointer(window));
-		glViewport(0, 0, width, height);
-		thisPtr->mCamera.SetPerspective(float(width) / float(height));
-	}
-
-	void RenderWidget::CursorPosCallBack(GLFWwindow* window, double xpos, double ypos) {
-		auto thisPtr = reinterpret_cast<RenderWidget*>(glfwGetWindowUserPointer(window));
-		if (!(thisPtr->mLeftPressFlag || thisPtr->mRightPressFlag || thisPtr->mMiddlePressFlag)) {
-			return;
-		}
-
-		if (thisPtr->mFirstMouseFlag) {
-			thisPtr->mLastX = xpos;
-			thisPtr->mLastY = ypos;
-			thisPtr->mFirstMouseFlag = false;
-		}
-
-		float xOffset = xpos - thisPtr->mLastX;
-		float yOffset = ypos - thisPtr->mLastY;
-
-		if (thisPtr->mLeftPressFlag) {
-			thisPtr->mCamera.ProcessRotate(glm::vec2(xOffset, yOffset));
-		}
-		else if (thisPtr->mRightPressFlag) {
-			thisPtr->mCamera.ProcessMove(glm::vec2(xOffset, yOffset));
-		}
-		else if (thisPtr->mMiddlePressFlag) {
-			thisPtr->mExternelAccleration = thisPtr->mCamera.GetRight() * xOffset - thisPtr->mCamera.GetUp() * yOffset;
-		}
-
-		thisPtr->mLastX = xpos;
-		thisPtr->mLastY = ypos;
-	}
-
-	void RenderWidget::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
-		auto thisPtr = reinterpret_cast<RenderWidget*>(glfwGetWindowUserPointer(window));
-		if (action == GLFW_PRESS) {
-			thisPtr->mFirstMouseFlag = true;
-			if (button == GLFW_MOUSE_BUTTON_LEFT) {
-				thisPtr->mLeftPressFlag = true;
-			}
-			else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-				thisPtr->mRightPressFlag = true;
-
-			}
-			else if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
-				thisPtr->mMiddlePressFlag = true;
-			}
-
-		}
-		else if (action == GLFW_RELEASE) {
-			if (button == GLFW_MOUSE_BUTTON_LEFT) {
-				thisPtr->mLeftPressFlag = false;
-			}
-			else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-				thisPtr->mRightPressFlag = false;
-			}
-			else if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
-				thisPtr->mMiddlePressFlag = false;
-				thisPtr->mExternelAccleration = glm::vec3(0.0);
-			}
-		}
-	}
-
-	void RenderWidget::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
-		auto thisPtr = reinterpret_cast<RenderWidget*>(glfwGetWindowUserPointer(window));
-		thisPtr->mCamera.ProcessScale(static_cast<float>(yoffset));
-	}
-
-	void RenderWidget::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode) {
-		auto thisPtr = reinterpret_cast<RenderWidget*>(glfwGetWindowUserPointer(window));
-		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
-			thisPtr->mPauseFlag = true;
-		}
-		else if (key == GLFW_KEY_SPACE && action == GLFW_RELEASE) {
-			thisPtr->mPauseFlag = false;
-		}
-
-	}
-
-	bool RenderWidget::CreateWindow() {
-		glfwInit();
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);  // °æ±¾
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-		glfwWindowHint(GLFW_SAMPLES, 9);    // ¶àÖØ²ÉÑù
-
-		// ´´½¨´°¿Ú
-		mWindow = glfwCreateWindow(mWindowWidth, mWindowHeight, "Fluid Simulation", NULL, NULL);
-		if (mWindow == nullptr)
-		{
-			std::cout << "Failed to create GLFW window" << std::endl;
-			glfwTerminate();
-			return false;
-		}
-		glfwSetWindowPos(mWindow, 100, 100);
-		glfwMakeContextCurrent(mWindow);
-
-		// ×¢²á»Øµ÷º¯Êý
-		glfwSetWindowUserPointer(mWindow, this);
-		glfwSetFramebufferSizeCallback(mWindow, ResizeCallback);
-		glfwSetCursorPosCallback(mWindow, CursorPosCallBack);
-		glfwSetMouseButtonCallback(mWindow, MouseButtonCallback);
-		glfwSetScrollCallback(mWindow, ScrollCallback);
-		glfwSetKeyCallback(mWindow, KeyCallback);
-
-		
-
-		return true;
-	}
-
-
-	bool RenderWidget::ShouldClose() {
-		return glfwWindowShouldClose(mWindow);
-	}
-
-	void RenderWidget::ProcessInput() {
-		if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-			glfwSetWindowShouldClose(mWindow, true);
-		}
-
-		return;
-	}
-
-	void RenderWidget::PollEvents() {
-		glfwPollEvents();
 	}
 }

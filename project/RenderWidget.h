@@ -18,7 +18,6 @@ namespace Fluid3d {
 	{
 	private:
 		// window
-		GLFWwindow* mWindow = nullptr;
 		int mWindowWidth = 1000;
 		int mWindowHeight = 1000;
 
@@ -36,10 +35,27 @@ namespace Fluid3d {
 		GLuint mComputeShaderProgram;
 		GLuint mScreenQuadShaderProgram;
 		GLuint mDrawColorShaderProgram;
-		GLuint mPointZShaderProgram;
-		GLuint mThicknessShaderProgram;
-		GLuint mFluidColorShaderProgram;
-		GLuint mModelShaderProgram;
+
+		int mWindowWidth = 1280;
+		int mWindowHeight = 720;
+
+		// camera
+		RenderCamera* mCamera;
+		bool mFirstMouseFlag = true;
+	
+		bool mLeftPressFlag = false;
+		bool mRightPressFlag = false;
+		bool mMiddlePressFlag = false;
+		bool mPauseFlag = false;
+
+		// shaders
+		GLuint mComputeShaderProgram = 0;
+		GLuint mScreenQuadShaderProgram = 0;
+		GLuint mDrawColorShaderProgram = 0;
+		GLuint mPointZShaderProgram = 0;
+		GLuint mThicknessShaderProgram= 0;
+		GLuint mFluidColorShaderProgram = 0;
+		GLuint mModelShaderProgram = 0;
 
 		// fbo
 		GLuint mFboDepth = 0;
@@ -85,19 +101,19 @@ namespace Fluid3d {
 		glm::vec3 mExternelAccleration = { 0.0, 0.0, 0.0 };
 		
 	public:
-		RenderWidget();
+		RenderWidget(RenderCamera* camera);
 		~RenderWidget();
 
 		bool CreateWindow();
 
 		void Init();
 
-		// ÉÏ´«¡¢¶ÁÈ¡Êý¾Ý
+		// ï¿½Ï´ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
 		void UploadUniforms(Fluid3d::ParticleSystem& ps);
 		void UploadParticleInfo(Fluid3d::ParticleSystem& ps);
 		void DumpParticleInfo(Fluid3d::ParticleSystem& ps);
 
-		// Çó½â¡¢äÖÈ¾
+		// ï¿½ï¿½â¡¢ï¿½ï¿½È¾
 		void SolveParticals();
 		void Update();
 
@@ -113,16 +129,19 @@ namespace Fluid3d {
 		void GenerateTextures();
 		void InitFilters();
 		void CreateRenderAssets();
-		void MakeVertexArrays(); // Éú³É»­Á£×ÓµÄvao
+		void MakeVertexArrays(); // ï¿½ï¿½ï¿½É»ï¿½ï¿½ï¿½ï¿½Óµï¿½vao
 
+
+		
 		void DrawParticles();
 		void LoadSkyBox();
 
-		static void ResizeCallback(GLFWwindow* window, int width, int height);
-		static void CursorPosCallBack(GLFWwindow* window, double xpos, double ypos);
-		static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-		static void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-		static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
+		/*static void ResizeCallback(int width, int height);
+		static void CursorPosCallBack(double xpos, double ypos);
+		static void MouseButtonCallback(Uint8 button, Uint8 state);
+		static void ScrollCallback(double xoffset, double yoffset);
+		static void KeyCallback(int key, int scancode, int action, int mode);*/
+
 	};
 
 

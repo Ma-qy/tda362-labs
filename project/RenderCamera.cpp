@@ -12,7 +12,7 @@ namespace Fluid3d {
         mTargetDistance = 1.0f;
         UpdateView();
 
-        float aspect = 1.0f;
+        float aspect = 1280.0f / 720.0f;
         float nearPlane = 0.1f;
         float farPlane = 100.0f;
         float fovyDeg = 60.0f;
@@ -64,17 +64,33 @@ namespace Fluid3d {
         return mFront;
     }
 
+    glm::vec3 RenderCamera::GetPosition()
+    {
+        return mPosition;
+    }
+
+    void RenderCamera::UpdateYawPiFront(float_t yaw, float_t pitch)
+    {
+        mYaw = yaw;
+        mPitch = pitch;
+        UpdateView();
+    }
+
+    
+
     void RenderCamera::UpdateView() {
         
         mFront.x = std::cos(glm::radians(mPitch)) * std::cos(glm::radians(mYaw));
         mFront.y = std::cos(glm::radians(mPitch)) * std::sin(glm::radians(mYaw));
         mFront.z = std::sin(glm::radians(mPitch));
-        mFront = -glm::normalize(mFront);
+        mFront = glm::normalize(mFront);
 
         mRight = glm::normalize(glm::cross(mFront, mWorldUp));
         mUp = glm::normalize(glm::cross(mRight, mFront));
 
-        mPosition = mTargetPoint - mTargetDistance * mFront;
-        mView = glm::lookAt(mPosition, mTargetPoint, mUp);
+        mPosition = mTargetPoint + mTargetDistance * mFront;
+        mView = glm::lookAt(mPosition, mTargetPoint, -mUp);
     }
+
+    
 }

@@ -20,6 +20,9 @@ namespace Fluid3d {
         glm::vec3 GetUp();
         glm::vec3 GetRight();
         glm::vec3 GetFront();
+        glm::vec3 GetPosition();
+
+        void UpdateYawPiFront(float_t yaw, float_t pitch);
 
     private:
         void UpdateView();
@@ -27,8 +30,8 @@ namespace Fluid3d {
     private:
         float_t mYaw;
         float_t mPitch;
-        float_t mSensitiveYaw = 0.1;
-        float_t mSensitivePitch = 0.1;
+        float_t mSensitiveYaw = 1.0;
+        float_t mSensitivePitch = 1.0;
         float_t mSensitiveX = 0.001;
         float_t mSensitiveY = 0.001;
         float_t mSensitiveFront = 0.05;
