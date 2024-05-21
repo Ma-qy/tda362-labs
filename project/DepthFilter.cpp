@@ -26,6 +26,8 @@ namespace Fluid3d {
         glBindTexture(GL_TEXTURE_2D, mTexDepthFilter);
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, mBufferKernelIndexs5x5);
         mBlurZ->Use();
+
+        //较小的模糊核（5x5）和逐步增加的过滤间隔进行多次模糊处理
         mBlurZ->SetInt("indexesSize", 25);
         mBlurZ->SetFloat("sigma1", mSigma1);
         mBlurZ->SetFloat("sigma2", mSigma2);
@@ -38,6 +40,7 @@ namespace Fluid3d {
             std::swap(bufferA, bufferB);
         }
 
+        //切换到9x9模糊核进行进一步处理
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, mBufferKernelIndexs9x9);
         mBlurZ->SetInt("indexesSize", 81);
         mBlurZ->SetInt("filterInterval", 1);
@@ -72,6 +75,7 @@ namespace Fluid3d {
         // 传入纹理 
         glGenTextures(1, &mTexDepthFilter);
         glBindTexture(GL_TEXTURE_2D, mTexDepthFilter);
+        // 传入WeightBuffer
         glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, mBufferSize.x, mBufferSize.y, 0, GL_RED, GL_FLOAT, mWeightBuffer.data());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);

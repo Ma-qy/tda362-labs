@@ -6,14 +6,15 @@ layout(r32f, binding = 1) uniform image2D outputImage;
 
 layout(binding = 0) uniform sampler2D weightBuffer;
 
+//存储用于模糊计算的索引偏移
 layout(std430, binding=0) buffer Indexs
 {
     ivec2 indexes[];
 };
 
-uniform int filterInterval;
-uniform int indexesSize;
-uniform float sigma1;
+uniform int filterInterval; //索引偏移的间隔
+uniform int indexesSize;    //索引的数量
+uniform float sigma1;       
 uniform float sigma2;
 
 float Weight(float d1, float d2) {
@@ -22,8 +23,8 @@ float Weight(float d1, float d2) {
 }
 
 void main() {
-    ivec2 curPixelId = ivec2(gl_GlobalInvocationID.xy);
-    vec4 originDepth = imageLoad(inputImage, curPixelId);
+    ivec2 curPixelId = ivec2(gl_GlobalInvocationID.xy);  //当前像素位置
+    vec4 originDepth = imageLoad(inputImage, curPixelId); //根据当前像素位置找到此处的深度值
     if (originDepth.r > 0.0) {
         imageStore(outputImage, curPixelId, vec4(1.0, 0.0, 0.0, 0.0));
         return;
@@ -32,6 +33,7 @@ void main() {
     highp float blureDepth = 0.0;
     highp float weightSum = 0.0;
 
+    // 遍历索引缓冲区，计算模糊深度和权重和
     for(int i = 0; i < indexesSize; i++){
         ivec2 index = indexes[i] * filterInterval;
         vec4 sampleColor = imageLoad(inputImage, curPixelId + index);

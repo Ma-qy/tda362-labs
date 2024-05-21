@@ -24,7 +24,7 @@ namespace Fluid3d {
 
         void Init();
         void Destroy();
-        void Update(GLuint vaoParticals, int32_t particalNum, DepthFilter* depthFilter);
+        void Update(GLuint vaoParticals, int32_t particalNum, DepthFilter* depthFilter, GLuint doneBuffer);
         void DrawCaustic(GLuint vaoNull, const glm::mat4& model);
         GLuint GetShadowMap();
         GLuint GetCausticMap();

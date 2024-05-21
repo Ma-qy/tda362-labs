@@ -56,8 +56,9 @@ namespace Fluid3d
 	void RenderWidget::Init()
 	{
 		floorModel = glm::mat4(1.0);
-		floorModel = glm::scale(floorModel, glm::vec3(0.5));
-		floorModel = glm::translate(floorModel, glm::vec3(0.5, 0.5, 1.2));
+		floorModel = glm::translate(floorModel, glm::vec3(0.3, 0.3, 0.4));
+		floorModel = glm::scale(floorModel, glm::vec3(0.6));
+		
 
 		BuildShaders();
 
@@ -68,7 +69,7 @@ namespace Fluid3d
 		InitFilters();
 		LoadSkyBox();
 		CreateRenderAssets();
-		MakeVertexArrays(); // ���ɻ����ӵ�vao
+		MakeVertexArrays(); 
 
 		glGenVertexArrays(1, &mVaoNull);
 		glEnable(GL_MULTISAMPLE);
@@ -138,7 +139,6 @@ namespace Fluid3d
 
 	void RenderWidget::GenerateTextures()
 	{
-		// �����õ�����
 		glGenTextures(1, &mTestTexture);
 		glBindTexture(GL_TEXTURE_2D, mTestTexture);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -148,7 +148,7 @@ namespace Fluid3d
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 100, 100, 0, GL_RGBA, GL_FLOAT, NULL);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
-		// �˺�������
+			
 		glGenTextures(1, &mTexKernelBuffer);
 		glBindTexture(GL_TEXTURE_1D, mTexKernelBuffer);
 		glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -157,7 +157,6 @@ namespace Fluid3d
 		glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glBindTexture(GL_TEXTURE_1D, 0);
 
-		// ģ��Z�������ͼ
 		glGenTextures(1, &mTexZBlurTempBuffer);
 		glBindTexture(GL_TEXTURE_2D, mTexZBlurTempBuffer);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, mWindowWidth, mWindowHeight, 0, GL_RED, GL_FLOAT, NULL);
@@ -168,12 +167,12 @@ namespace Fluid3d
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
-	//����framebuffer ���ɴ洢��Ⱥͺ������
+	
 	void RenderWidget::GenerateFrameBuffers()
 	{
 		glGenFramebuffers(1, &mFboDepth);
 
-		//���ɲ������������
+		
 		glGenTextures(1, &mTexZBuffer);
 		glBindTexture(GL_TEXTURE_2D, mTexZBuffer);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, mWindowWidth, mWindowHeight, 0, GL_RED, GL_FLOAT, NULL);  //��ʼ��Ϊ��ͨ��������������С�봰�ڴ�С��ͬ���������������ڴ洢���ֵ��������ͨ�����ݡ�
@@ -225,15 +224,16 @@ namespace Fluid3d
 	
 	void RenderWidget::CreateRenderAssets()
 	{
+		//材质
 		mSlabWhite = new Material();
 		mSlabWhite->Create();
 		std::string albedoPath = "../scenes/Slab/TexturesCom_Marble_SlabWhite_1K_albedo.png";
 		std::string roughnessPath = "../scenes/Slab/TexturesCom_Marble_SlabWhite_1K_roughness.png";
 		mSlabWhite->LoadTextures(albedoPath, roughnessPath);
 
-		// �ƹ�
-		mLight.pos = glm::vec3(-0.8, -0.8, 2.0);
-		mLight.dir = glm::vec3(0.5, 0.5, -1.0);
+		// 灯光
+		mLight.pos = glm::vec3(0.8, 0.8, 2.0);
+		mLight.dir = glm::vec3(-0.5, -0.5, -1.0);
 		mLight.aspect = 1.0f;
 		mLight.fovy = 30.0;
 
@@ -305,11 +305,11 @@ namespace Fluid3d
 	}
 
 	void RenderWidget::UploadParticleInfo(Fluid3d::ParticleSystem& ps) {
-		// ����װ������Ϣ��buffer
+		
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, mBufferParticals);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, ps.mParticalInfos.size() * sizeof(ParticleInfo3d), ps.mParticalInfos.data(), GL_DYNAMIC_COPY);
 
-		// ����block����buffer
+		
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, mBufferBlocks);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, ps.mBlockExtens.size() * sizeof(glm::uvec2), ps.mBlockExtens.data(), GL_DYNAMIC_COPY);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
@@ -318,7 +318,7 @@ namespace Fluid3d
 	}
 
 	void RenderWidget::DumpParticleInfo(Fluid3d::ParticleSystem& ps) {
-		// ��������Ϣ����CP
+		
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, mBufferParticals);
 		glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, mParticalNum * sizeof(ParticleInfo3d), (void*)ps.mParticalInfos.data());
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
@@ -359,7 +359,6 @@ namespace Fluid3d
 	void RenderWidget::DrawParticles()
 	{
 		glFinish();
-		//// �Ե����ʽ������
 
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		//
@@ -399,22 +398,21 @@ namespace Fluid3d
 		glDrawArrays(GL_POINTS, 0, mParticalNum);
 	
 		glUseProgram(0);
-		//
-		//
+		
 
 		//混合
 		GLuint bufferA = mTexZBuffer;
 		GLuint bufferB = mTexZBlurTempBuffer;
 		mDepthFilter->Filter(bufferA, bufferB, glm::ivec2(mWindowWidth, mWindowHeight));
 
+		
+
 
 		//厚度图
 		glBindFramebuffer(GL_FRAMEBUFFER, mFboThickness);
-		
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE, GL_ONE);
-
 		glUseProgram(mThicknessShaderProgram);
 		labhelper::setUniformSlow(mThicknessShaderProgram, "view", mCamera->GetView());
 		labhelper::setUniformSlow(mThicknessShaderProgram, "projection", mCamera->GetProjection());
@@ -425,22 +423,21 @@ namespace Fluid3d
 		glBindVertexArray(mVaoParticals);
 		glDrawArrays(GL_POINTS, 0, mParticalNum);
 		glUseProgram(0);
-
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 
-		// shadowmap
-		mShadowMap->Update(mVaoParticals, mParticalNum, mDepthFilter);
 
-		// 
+		//焦散
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, mWindowWidth, mWindowHeight);
 		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		mShadowMap->DrawCaustic(mVaoNull, floorModel);
+
+		// shadowmap
+		mShadowMap->Update(mVaoParticals, mParticalNum, mDepthFilter, bufferB);
 
 		// 地板
 		glEnable(GL_DEPTH_TEST);

@@ -21,7 +21,7 @@ namespace Fluid3d {
 
     void FluidShadowMap::SetLightInfo(PointLight& light) {
         mLightViewFront = glm::normalize(light.dir);
-        mLightViewRight = glm::normalize(glm::cross(mLightViewFront, Glb::Z_AXIS));
+        mLightViewRight = glm::normalize(glm::cross(mLightViewFront, -Glb::Z_AXIS));
         mLightViewUp = glm::normalize(glm::cross(mLightViewRight, mLightViewFront));
         mLightView = glm::lookAt(light.pos, light.pos + light.dir, mLightViewUp);
         float_t aspect = float_t(mWidth) / mHeight;
@@ -42,8 +42,8 @@ namespace Fluid3d {
         
     }
 
-    void FluidShadowMap::Update(GLuint vaoParticals, int32_t particalNum, DepthFilter* depthFilter) {
-        // 渲染深度图
+    void FluidShadowMap::Update(GLuint vaoParticals, int32_t particalNum, DepthFilter* depthFilter, GLuint doneBuffer) {
+        /* /渲染深度图
         glViewport(0, 0, mWidth, mHeight);
         glBindFramebuffer(GL_FRAMEBUFFER, mFbo);
         glClearColor(0.5f, 0.0f, 0.0f, 0.0f);
@@ -55,10 +55,11 @@ namespace Fluid3d {
         glUseProgram(0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        // 平滑深度图
+        //平滑深度图
         mZBufferA = mTextureZBuffer;
         mZBufferB = mTextureTempZBuffer;
-        depthFilter->Filter(mZBufferA, mZBufferB, glm::ivec2(mWidth, mHeight));
+        depthFilter->Filter(mZBufferA, mZBufferB, glm::ivec2(mWidth, mHeight));*/
+        mZBufferB = doneBuffer;
     }
 
     void FluidShadowMap::DrawCaustic(GLuint vaoNull, const glm::mat4& model) {

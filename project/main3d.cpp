@@ -138,8 +138,8 @@ bool handleEvents(void)
 int main() {
 
     Fluid3d::ParticleSystem ps;
-    ps.SetContainerSize(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.6, 0.6, 0.6));
-    ps.AddFluidBlock(glm::vec3(0.05, 0.35, 0.25), glm::vec3(0.15, 0.15, 0.3), glm::vec3(0.0, 0.0, 3.0), 0.005 * 0.8);
+    ps.SetContainerSize(glm::vec3(0.0, -0.0, -0.2), glm::vec3(0.6, 0.6, 0.6));
+    ps.AddFluidBlock(glm::vec3(0.35, 0.05, -0.0), glm::vec3(0.15, 0.15, 0.3), glm::vec3(0.0, 0.0, 3.0), 0.005 * 0.8);
     //ps.AddFluidBlock(glm::vec3(0.35, 0.05, 0.25), glm::vec3(0.15, 0.15, 0.3), glm::vec3(0.0, 0.0, -4.0), 0.01 * 0.8);
     //ps.AddFluidBlock(glm::vec3(0.2, 0.2, 0.25), glm::vec3(0.2, 0.2, 0.3), glm::vec3(0.0, 0.0, 0.0), 0.01 * 0.8);
     ps.UpdateData();

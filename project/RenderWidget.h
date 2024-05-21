@@ -17,11 +17,6 @@ namespace Fluid3d {
 	class RenderWidget
 	{
 	private:
-		
-
-		
-	
-
 		int mWindowWidth = 1280;
 		int mWindowHeight = 720;
 

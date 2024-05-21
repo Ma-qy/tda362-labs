@@ -15,7 +15,7 @@ layout(binding=4) uniform sampler2D texRoughness;
 uniform mat4 lightView;
 uniform mat4 lightProjection;
 
-const vec3 shadowColor = 0.5 * vec3(0.1, 0.5, 1.0);
+const vec3 shadowColor = vec3(0.1, 0.5, 1.0);
 
 vec3 lightColor = vec3(1.0);
 vec3 Normal = vec3(0.0, 0.0, 1.0);
