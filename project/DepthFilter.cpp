@@ -1,5 +1,5 @@
 #include "DepthFilter.h"
-#include "labhelper.h"
+
 namespace Fluid3d {
     DepthFilter::DepthFilter() {
     }

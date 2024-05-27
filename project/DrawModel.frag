@@ -14,8 +14,9 @@ layout(binding=4) uniform sampler2D texRoughness;
 
 uniform mat4 lightView;
 uniform mat4 lightProjection;
+uniform bool CausticFlag;
 
-const vec3 shadowColor = vec3(0.1, 0.5, 1.0);
+const vec3 shadowColor = vec3(0.05, 0.05, 0.05);
 
 vec3 lightColor = vec3(1.0);
 vec3 Normal = vec3(0.0, 0.0, 1.0);
@@ -71,10 +72,13 @@ vec3 ShadeFloorWithShadow(vec3 originColor, vec3 lightPos, vec3 curPosition) {
     float shadowFactor = 0.2 * Pcf(texCoord, fragDist);
     vec3 colorWithShadow = mix(originColor, shadowColor, shadowFactor);
 
+    if(CausticFlag){
     // Ìí¼Ó½¹É¢
     vec3 caustic = texture(causticMap, texCoord).xyz;
-
     return colorWithShadow + caustic;
+    } else{
+        return colorWithShadow;
+    }
 }
 
 void main() {

@@ -40,5 +40,5 @@ add_executable ( ${PROJECT_NAME}
     ${SHADERS}
     )
 
-target_link_libraries ( ${PROJECT_NAME} labhelper )
+# target_link_libraries ( ${PROJECT_NAME} labhelper )
 config_build_output()

@@ -1,9 +1,11 @@
-#pragma once
+#ifndef FLUID_SHADOW_MAP_H
+#define FLUID_SHADOW_MAP_H
 
-
+#include <string>
+#include "Shader.h"
 #include "ComputeShader.h"
 #include "DepthFilter.h"
-
+#include "RenderCamera.h"
 
 namespace Fluid3d {
     struct PointLight {
@@ -24,8 +26,8 @@ namespace Fluid3d {
 
         void Init();
         void Destroy();
-        void Update(GLuint vaoParticals, int32_t particalNum, DepthFilter* depthFilter, GLuint doneBuffer);
-        void DrawCaustic(GLuint vaoNull, const glm::mat4& model);
+        void Update(GLuint vaoParticals, int32_t particalNum, DepthFilter* depthFilter);
+        void DrawCaustic(RenderCamera* camera, GLuint vaoNull, const glm::mat4& model);
         GLuint GetShadowMap();
         GLuint GetCausticMap();
 
@@ -35,8 +37,8 @@ namespace Fluid3d {
         void InitIntrinsic();
 
     public:
-        GLuint mPointZShaderProgram;
-        GLuint mCausticMapShaderProgram;
+        Glb::Shader* mPointSpriteZValue = nullptr;
+        Glb::Shader* mCausticMap = nullptr;
 
         int32_t mWidth = 1024;
         int32_t mHeight = 1024;
@@ -61,5 +63,7 @@ namespace Fluid3d {
     };
 }
 
+
+#endif // !FLUID_SHADOW_MAP_H
 
 

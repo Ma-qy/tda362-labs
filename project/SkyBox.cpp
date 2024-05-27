@@ -1,16 +1,16 @@
 #include "SkyBox.h"
 #include "stb_image.h"
-#include "labhelper.h"
+
 #include <iostream>
 
 namespace Fluid3d {
 
     SkyBox::SkyBox() {
-        
+        mShader = new Glb::Shader();
     }
 
     SkyBox::~SkyBox() {
-        
+        delete mShader;
     }
 
     void SkyBox::Create() {
@@ -55,27 +55,28 @@ namespace Fluid3d {
     }
 
     void SkyBox::BuildShader() {
-        mShader = labhelper::loadShaderProgram("../project/SkyBox.vert", "../project/SkyBox.frag", false);
-        glUseProgram(mShader);
-        labhelper::setUniformSlow(mShader, "skybox", 0);
-        glUseProgram(0);
+        std::string vertPath = "../project/SkyBox.vert";
+        std::string fragPath = "../project/SkyBox.frag";
+        mShader->BuildFromFile(vertPath, fragPath);
+        mShader->Use();
+        mShader->SetInt("skybox", 0);
+        mShader->UnUse();
     }
 
-    void SkyBox::Draw(GLuint nullVao, glm::mat4 view, glm::mat4 proj) {
+    void SkyBox::Draw(GLFWwindow* window, GLuint nullVao, glm::mat4 view, glm::mat4 proj) {
         glDepthMask(GL_FALSE);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
-        glUseProgram(mShader);
+        mShader->Use();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, mId);
-        labhelper::setUniformSlow(mShader, "view", glm::mat4(glm::mat3(view)));
-        labhelper::setUniformSlow(mShader, "projection", proj);
-       
+        mShader->SetMat4("view", glm::mat4(glm::mat3(view)));
+        mShader->SetMat4("projection", proj);
         glBindVertexArray(nullVao);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
-        glUseProgram(0);
+        mShader->UnUse();
 
         glDepthMask(GL_TRUE);
         glBindTexture(GL_TEXTURE_CUBE_MAP, 0);

@@ -2,7 +2,7 @@
 #define MATERIAL_H
 
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <string>
 
 namespace Fluid3d {

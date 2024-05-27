@@ -1,10 +1,13 @@
 #version 450 core
 // ----------consts----------
-const float gGravity = 9.8;
 const float gDeltaT = 8e-4;
 const float gEps = 1e-5;
 const float gMaxVelocity = 100.0;
 const float gVelocityAttenuation = 0.9;
+//const float gVelocityAttenuation = 0.001;  //for smoke
+const float obstacleR = 0.06;
+
+
 
 //  ----------uniform----------
 uniform uint pass;
@@ -17,6 +20,7 @@ uniform vec3 containerLowerBound;
 uniform vec3 containerUpperBound;
 uniform int blockIdOffs[27];
 
+uniform float gGravity;
 uniform float gSupportRadius;
 uniform vec3 gGravityDir;
 uniform float gDensity0;
@@ -26,7 +30,11 @@ uniform float gStiffness;
 uniform float gExponent;
 uniform float gViscosity;
 
+uniform bool ObstacleFlag = false;
+
 uniform vec3 gExternelAccleration;
+
+uniform vec3 Random;
 
 // local size
 layout (local_size_x = 512, local_size_y = 1, local_size_z = 1) in;
@@ -48,6 +56,15 @@ struct NeighborInfo {
     int neighborId;
 };
 
+struct SphereInfo {
+    vec3 position;
+    highp float radius;
+    vec3 velocity;
+    highp float mass;
+    vec3 acceleration;
+    vec3 buoyangcy;
+};
+
 
 // ----------buffers----------
 layout(std140, binding=4) buffer ParticalInfos
@@ -60,10 +77,16 @@ layout(binding=5) buffer BlockExtens
     uvec2 blockExtens[];
 };
 
+layout(std140, binding=6) buffer SpherePositionBuffer {
+    SphereInfo sphere[];
+};
+
 
 layout(rgba32f, binding = 0) uniform image2D imgOutput;
 
 uniform sampler1D kernelBuffer;
+
+
 
 // ----------functions----------
 void EulerIntegration(inout ParticalInfo3d pi) {
@@ -87,7 +110,8 @@ void ComputeDensityAndPress(inout ParticalInfo3d pi) {
     }
     pi.density *= (gVolume * gDensity0);
     pi.density = max(pi.density, gDensity0);
-    pi.pressure = gStiffness * (pow(pi.density / gDensity0, gExponent) - 1.0);
+    //pi.pressure = gStiffness * (pow(pi.density / gDensity0, gExponent) - 1.0);
+    pi.pressure = gStiffness * (pi.density - gDensity0);
     pi.pressDivDens2 = pi.pressure / pow(pi.density, 2);
 }
 
@@ -118,7 +142,35 @@ void ComputeAccleration(inout ParticalInfo3d pi) {
 
     pi.accleration += viscosityForce * constFactor;
     pi.accleration -= pressureForce * gVolume;
+
+    if(ObstacleFlag){
+        vec3 obstaclePos = vec3(0.3, 0.3, 0.06);
+        //vec3 obstaclePos = sphere[0]Pos;
+        
+        vec3 dtoob = pi.position - obstaclePos;
+        float distanceToOb = length(dtoob);
+
+        if(distanceToOb <= obstacleR){
+             vec3 repulsionDir = normalize(dtoob);
+             float repulsionStrength = (obstacleR +  gSupportRadius - distanceToOb) / gSupportRadius;
+                pi.accleration += repulsionDir * repulsionStrength * gStiffness * 5.0;
+                //pi.accleration = vec3(0.0);
+                //pi.velosity = vec3(0.0);
+                //sphere[0]force -= repulsionDir * repulsionStrength * gStiffness * 5.0 * gMass;
+        }
+    }
+
+    vec3 dtoball = pi.position - sphere[0].position;
+    float distanceToball = length(dtoball);
+
+    if(distanceToball < sphere[0].radius){
+        sphere[0].buoyangcy += vec3(0, 0, 1.0);
+    }
+    
 }
+
+
+
 
 void BoundaryCondition(inout ParticalInfo3d pi) {
     bool invFlag = false; 
@@ -157,8 +209,51 @@ void BoundaryCondition(inout ParticalInfo3d pi) {
         pi.velosity *= gVelocityAttenuation;
     }
 
+    //pi.position = clamp(pi.position, containerLowerBound + vec3(gSupportRadius + gEps), containerUpperBound - vec3(gSupportRadius + gEps));
     pi.position = clamp(pi.position, containerLowerBound + vec3(gSupportRadius + gEps), containerUpperBound - vec3(gSupportRadius + gEps));
     pi.velosity = clamp(pi.velosity, vec3(-gMaxVelocity), vec3(gMaxVelocity));    // 速度限制
+}
+
+void BoundaryCondition(inout SphereInfo pi) {
+    bool invFlag = false; 
+
+    if (pi.position.x < containerLowerBound.x + pi.radius) {
+        pi.velocity.x = abs(pi.velocity.x);
+        invFlag = true;
+    }
+
+    if (pi.position.y < containerLowerBound.y + gSupportRadius) {
+        pi.velocity.y = abs(pi.velocity.y);
+        invFlag = true;
+    }
+
+    if (pi.position.z < containerLowerBound.z + gSupportRadius) {
+        pi.velocity.z = abs(pi.velocity.z);
+        invFlag = true;
+    }
+
+    if (pi.position.x > containerUpperBound.x - gSupportRadius) {
+        pi.velocity.x = -abs(pi.velocity.x);
+        invFlag = true;
+    }
+
+    if (pi.position.y > containerUpperBound.y - gSupportRadius) {
+        pi.velocity.y = -abs(pi.velocity.y);
+        invFlag = true;
+    }
+
+    if (pi.position.z > containerUpperBound.z - gSupportRadius) {
+        pi.velocity.z = -abs(pi.velocity.z);
+        invFlag = true;
+    }
+
+    if (invFlag) {
+        pi.velocity *= 0.5;
+    }
+
+    //pi.position = clamp(pi.position, containerLowerBound + vec3(gSupportRadius + gEps), containerUpperBound - vec3(gSupportRadius + gEps));
+    pi.position = clamp(pi.position, containerLowerBound + vec3(pi.radius + gSupportRadius + gEps), containerUpperBound - vec3(pi.radius + gEps));
+    pi.velocity = clamp(pi.velocity, vec3(-gMaxVelocity), vec3(gMaxVelocity));    // 速度限制
 }
 
 void CalculateBlockId(inout ParticalInfo3d pi) {
@@ -169,6 +264,7 @@ void CalculateBlockId(inout ParticalInfo3d pi) {
 
 // ----------main----------
 void main() {
+
     uint particalId = gl_GlobalInvocationID.x;
 
     if (pass == 0) {
@@ -180,7 +276,25 @@ void main() {
         EulerIntegration(particals[particalId]);
         BoundaryCondition(particals[particalId]);
         CalculateBlockId(particals[particalId]);
+
+        if(particalId == 1){
+            sphere[0].acceleration = (1 - sphere[0].buoyangcy.z / 5.0) * gGravity * gGravityDir;
+            if(abs(sphere[0].acceleration.z) < gGravity / 5.0){
+                sphere[0].acceleration = vec3(0.0);
+                sphere[0].velocity = vec3(0.0);
+            }
+            else{ 
+                sphere[0].velocity += sphere[0].acceleration * gDeltaT * 2;
+                sphere[0].velocity = clamp(sphere[0].velocity, vec3(-gMaxVelocity / 5), vec3(gMaxVelocity / 5));
+                sphere[0].position = sphere[0].position + sphere[0].velocity * gDeltaT;
+            }
+            BoundaryCondition(sphere[0]);
+            sphere[0].buoyangcy = vec3(0.0);
+        }
     }
+
+    
+    
 
     imageStore(imgOutput, ivec2(particalId % 100, particalId / 100), vec4(1.0, 1.0, 0.0, 1.0));
     return;

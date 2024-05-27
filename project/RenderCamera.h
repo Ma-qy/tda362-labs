@@ -1,4 +1,6 @@
-#pragma once
+#ifndef RENDER_CAMERA_H
+#define RENDER_CAMERA_H
+
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -13,7 +15,7 @@ namespace Fluid3d {
         void ProcessMove(glm::vec2 offset);
         void ProcessRotate(glm::vec2 offset);
         void ProcessScale(float offset);
-        void SetPerspective(float aspect = 1.0f, float nearPlane = 0.1f, float mFarPlane = 100.0f, float fovyDeg = 60.0f);
+        void SetPerspective(float aspect = 1280.0 / 720.0, float nearPlane = 0.1f, float mFarPlane = 100.0f, float fovyDeg = 60.0f);
 
         glm::mat4 GetView();
         glm::mat4 GetProjection();
@@ -22,16 +24,14 @@ namespace Fluid3d {
         glm::vec3 GetFront();
         glm::vec3 GetPosition();
 
-        void UpdateYawPiFront(float_t yaw, float_t pitch);
-
     private:
         void UpdateView();
 
     private:
         float_t mYaw;
         float_t mPitch;
-        float_t mSensitiveYaw = 1.0;
-        float_t mSensitivePitch = 1.0;
+        float_t mSensitiveYaw = 0.1;
+        float_t mSensitivePitch = 0.1;
         float_t mSensitiveX = 0.001;
         float_t mSensitiveY = 0.001;
         float_t mSensitiveFront = 0.05;
@@ -49,3 +49,6 @@ namespace Fluid3d {
 
     };
 }
+
+
+#endif // !RENDER_CAMERA_H

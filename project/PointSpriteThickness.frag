@@ -21,6 +21,6 @@ void main() {
     float deltaDepthNorm = 2.0 * sqrt(0.5 * 0.5 - pow(texCoordQuad.x - 0.5, 2) - pow(texCoordQuad.y - 0.5, 2) + 1e-5);
     float thickness = 2.0 * particalRadius * deltaDepthNorm;
 
-    fragColor = vec4(thickness, 0.0, 0.0, 0.0);
+    fragColor = vec4(thickness*5.0, 0.0, 0.0, 0.0);
     return;
 }

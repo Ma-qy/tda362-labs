@@ -179,7 +179,7 @@ void main() {
     vec4 wiOnWorld = lightToWorldRot * vec4(normalize(wiOnCamera), 1.0);
     vec3 woRefract = refract(wiOnWorld.xyz, normalOnWorld.xyz, eta);
 
-    mat4 worldToModel = inverse(-model);
+    mat4 worldToModel = inverse(model);
 
     Ray refractRay;     // 模型局部坐标系下
     refractRay.origin = (worldToModel * curPoseOnWorld).xyz;

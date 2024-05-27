@@ -1,15 +1,14 @@
-#include <iostream>
-#include <cmath>
 #include "RenderCamera.h"
+#include <iostream>
 
 namespace Fluid3d {
     RenderCamera::RenderCamera() {
         mYaw = 90.0f;
-        mPitch = 5.0f;
+        mPitch = 15.0f;
 
         mWorldUp = glm::vec3(0.0, 0.0, 1.0);
-        mTargetPoint = glm::vec3(0.3, 0.35, -0.05);
-        mTargetDistance = 1.2f;
+        mTargetPoint = glm::vec3(0.3, 0.35, 0.15);
+        mTargetDistance = 1.0f;
         UpdateView();
 
         float aspect = 1280.0f / 720.0f;
@@ -53,7 +52,7 @@ namespace Fluid3d {
     }
 
     glm::vec3 RenderCamera::GetUp() {
-        return -mUp;
+        return mUp;
     }
 
     glm::vec3 RenderCamera::GetRight() {
@@ -64,33 +63,20 @@ namespace Fluid3d {
         return mFront;
     }
 
-    glm::vec3 RenderCamera::GetPosition()
-    {
+    glm::vec3 RenderCamera::GetPosition() {
         return mPosition;
     }
 
-    void RenderCamera::UpdateYawPiFront(float_t yaw, float_t pitch)
-    {
-        mYaw = yaw;
-        mPitch = pitch;
-        UpdateView();
-    }
-
-    
-
     void RenderCamera::UpdateView() {
-        
         mFront.x = std::cos(glm::radians(mPitch)) * std::cos(glm::radians(mYaw));
         mFront.y = std::cos(glm::radians(mPitch)) * std::sin(glm::radians(mYaw));
         mFront.z = std::sin(glm::radians(mPitch));
-        mFront = glm::normalize(mFront);
+        mFront = -glm::normalize(mFront);
 
         mRight = glm::normalize(glm::cross(mFront, mWorldUp));
         mUp = glm::normalize(glm::cross(mRight, mFront));
 
-        mPosition = mTargetPoint + mTargetDistance * mFront;
-        mView = glm::lookAt(mPosition, mTargetPoint, -mUp);
+        mPosition = mTargetPoint - mTargetDistance * mFront;
+        mView = glm::lookAt(mPosition, mTargetPoint, mUp);
     }
-
-    
 }

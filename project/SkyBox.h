@@ -1,12 +1,18 @@
 #ifndef SKY_BOX_H
 #define SKY_BOX_H
-
+#define GLFW_INCLUDE_NONE
 #include <vector>
 #include <string>
-#include <GL/glew.h>
-#include <glm/glm.hpp>
 
+#include <glad/glad.h>
 
+#include <GLFW/glfw3.h>
+
+#include "Shader.h"
+
+#ifndef STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#endif // !STB_IMAGE_IMPLEMENTATION
 
 namespace Fluid3d {
     class SkyBox {
@@ -21,13 +27,13 @@ namespace Fluid3d {
 
         void BuildShader();
 
-        void Draw(GLuint nullVao, glm::mat4 view, glm::mat4 proj);
+        void Draw(GLFWwindow* window, GLuint nullVao, glm::mat4 view, glm::mat4 proj);
 
         GLuint GetId();
 
     private:
         GLuint mId = 0;
-        GLuint mShader = 0;
+        Glb::Shader* mShader = nullptr;
 
     };
 }

@@ -1,5 +1,6 @@
 #include "Material.h"
 
+#include <glad/glad.h>
 #include "stb_image.h"
 #include <iostream>
 

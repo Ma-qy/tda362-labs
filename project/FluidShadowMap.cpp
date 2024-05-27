@@ -1,9 +1,8 @@
 #include "FluidShadowMap.h"
-#include <GL/glew.h>
 #include <iostream>
+#include <glad/glad.h>
 #include "Global.h"
 #include "Parameter3d.h"
-#include "labhelper.h"
 
 namespace Fluid3d {
     FluidShadowMap::FluidShadowMap() {
@@ -21,7 +20,7 @@ namespace Fluid3d {
 
     void FluidShadowMap::SetLightInfo(PointLight& light) {
         mLightViewFront = glm::normalize(light.dir);
-        mLightViewRight = glm::normalize(glm::cross(mLightViewFront, -Glb::Z_AXIS));
+        mLightViewRight = glm::normalize(glm::cross(mLightViewFront, Glb::Z_AXIS));
         mLightViewUp = glm::normalize(glm::cross(mLightViewRight, mLightViewFront));
         mLightView = glm::lookAt(light.pos, light.pos + light.dir, mLightViewUp);
         float_t aspect = float_t(mWidth) / mHeight;
@@ -39,30 +38,29 @@ namespace Fluid3d {
     }
 
     void FluidShadowMap::Destroy() {
-        
+        delete mPointSpriteZValue;
     }
 
-    void FluidShadowMap::Update(GLuint vaoParticals, int32_t particalNum, DepthFilter* depthFilter, GLuint doneBuffer) {
-        /* /渲染深度图
+    void FluidShadowMap::Update(GLuint vaoParticals, int32_t particalNum, DepthFilter* depthFilter) {
+        // 渲染深度图
         glViewport(0, 0, mWidth, mHeight);
         glBindFramebuffer(GL_FRAMEBUFFER, mFbo);
         glClearColor(0.5f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glUseProgram(mPointZShaderProgram);
+        mPointSpriteZValue->Use();
         glBindVertexArray(vaoParticals);
         glDrawArrays(GL_POINTS, 0, particalNum);
-        glUseProgram(0);
+        mPointSpriteZValue->UnUse();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        //平滑深度图
+        // 平滑深度图
         mZBufferA = mTextureZBuffer;
         mZBufferB = mTextureTempZBuffer;
-        depthFilter->Filter(mZBufferA, mZBufferB, glm::ivec2(mWidth, mHeight));*/
-        mZBufferB = doneBuffer;
+        depthFilter->Filter(mZBufferA, mZBufferB, glm::ivec2(mWidth, mHeight));
     }
 
-    void FluidShadowMap::DrawCaustic(GLuint vaoNull, const glm::mat4& model) {
+    void FluidShadowMap::DrawCaustic(RenderCamera* camera, GLuint vaoNull, const glm::mat4& model) {
         // 渲染焦散图
         glViewport(0, 0, mWidth, mHeight);
         glBindFramebuffer(GL_FRAMEBUFFER, mFboCaustic);
@@ -78,15 +76,14 @@ namespace Fluid3d {
         glBindImageTexture(0, mZBufferB, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32F);
         glBindVertexArray(vaoNull);
 
-        glUseProgram(mCausticMapShaderProgram);
-        labhelper::setUniformSlow(mCausticMapShaderProgram, "model", model);
+        mCausticMap->Use();
+        mCausticMap->SetMat4("model", model);
         for (int i = 0; i < Glb::ORIGIN_COLORS.size(); i++) {
-            float eta = 1.0 / (mIor + Para3d::IOR_BIAS * float(i - 1));
-            labhelper::setUniformSlow(mCausticMapShaderProgram, "eta", eta);
-            labhelper::setUniformSlow(mCausticMapShaderProgram, "photonColor", Glb::ORIGIN_COLORS[i] * Para3d::CAUSTIC_FACTOR);
+            mCausticMap->SetFloat("eta", 1.0 / (mIor + Para3d::IOR_BIAS * float(i - 1)));
+            mCausticMap->SetVec3("photonColor", Glb::ORIGIN_COLORS[i] * Para3d::CAUSTIC_FACTOR);
             glDrawArrays(GL_POINTS, 0, mWidth * mHeight);
         }
-        glUseProgram(0);
+        mCausticMap->UnUse();
 
         glBindVertexArray(0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -103,28 +100,34 @@ namespace Fluid3d {
     }
 
     void FluidShadowMap::CreateShaders() {
-        mPointZShaderProgram = labhelper::loadShaderProgram("../project/PointSprite.vert", "../project/PointSpriteZValue.frag", "../project/PointSprite.geom", false);
-        glUseProgram(mPointZShaderProgram);
-        labhelper::setUniformSlow(mPointZShaderProgram, "zFar", Para3d::zFar);
-        labhelper::setUniformSlow(mPointZShaderProgram, "zNear", Para3d::zNear);
-        labhelper::setUniformSlow(mPointZShaderProgram, "view", mLightView);
-        labhelper::setUniformSlow(mPointZShaderProgram, "projection", mLightProjection);
-        labhelper::setUniformSlow(mPointZShaderProgram, "particalRadius", Para3d::particalRadius);
-        labhelper::setUniformSlow(mPointZShaderProgram, "cameraUp", mLightViewUp);
-        labhelper::setUniformSlow(mPointZShaderProgram, "cameraRight", mLightViewRight);
-        labhelper::setUniformSlow(mPointZShaderProgram, "cameraFront", mLightViewFront);
-        
-        glUseProgram(0);
-       
-        mCausticMapShaderProgram = labhelper::loadShaderProgram("../project/CausticMap.vert", "../project/CausticMap.frag", false);
-        glUseProgram(mCausticMapShaderProgram);
-        labhelper::setUniformSlow(mCausticMapShaderProgram, "lightView", mLightView);
-        labhelper::setUniformSlow(mCausticMapShaderProgram, "lightProjection", mLightProjection);
-        labhelper::setUniformSlow(mCausticMapShaderProgram, "lightToWorld", glm::inverse(mLightView));
-        labhelper::setUniformSlow(mCausticMapShaderProgram, "lightToWorldRot", glm::mat4(glm::mat3(glm::inverse(mLightView))));
-        labhelper::setUniformSlow(mCausticMapShaderProgram, "imageWidth", mWidth);
-        labhelper::setUniformSlow(mCausticMapShaderProgram, "imageHeight", mHeight);
-        glUseProgram(0);
+        mPointSpriteZValue = new Glb::Shader();
+        std::string pointSpriteZValueVertPath = "../project/PointSprite.vert";
+        std::string pointSpriteZValueGeomPath = "../project/PointSprite.geom";
+        std::string pointSpriteZValueFragPath = "../project/PointSpriteZValue.frag";
+        mPointSpriteZValue->BuildFromFile(pointSpriteZValueVertPath, pointSpriteZValueFragPath, pointSpriteZValueGeomPath);
+        mPointSpriteZValue->Use();
+        mPointSpriteZValue->SetMat4("view", mLightView);
+        mPointSpriteZValue->SetMat4("projection", mLightProjection);
+        mPointSpriteZValue->SetFloat("particalRadius", Para3d::particalDiameter);
+        mPointSpriteZValue->SetVec3("cameraUp", mLightViewUp);
+        mPointSpriteZValue->SetVec3("cameraRight", mLightViewRight);
+        mPointSpriteZValue->SetVec3("cameraFront", mLightViewFront);
+        mPointSpriteZValue->SetFloat("zFar", Para3d::zFar);
+        mPointSpriteZValue->SetFloat("zNear", Para3d::zNear);
+        mPointSpriteZValue->UnUse();
+
+        mCausticMap = new Glb::Shader();
+        std::string causticMapVertPath = "../project/CausticMap.vert";
+        std::string causticMapFragPath = "../project/CausticMap.frag";
+        mCausticMap->BuildFromFile(causticMapVertPath, causticMapFragPath);
+        mCausticMap->Use();
+        mCausticMap->SetMat4("lightView", mLightView);
+        mCausticMap->SetMat4("lightProjection", mLightProjection);
+        mCausticMap->SetMat4("lightToWorld", glm::inverse(mLightView));
+        mCausticMap->SetMat4("lightToWorldRot", glm::mat4(glm::mat3(glm::inverse(mLightView))));
+        mCausticMap->SetInt("imageWidth", mWidth);
+        mCausticMap->SetInt("imageHeight", mHeight);
+        mCausticMap->UnUse();
     }
 
     void FluidShadowMap::CreateBuffers(int32_t w, int32_t h) {
@@ -185,10 +188,8 @@ namespace Fluid3d {
     }
 
     void FluidShadowMap::InitIntrinsic() {
-        glUseProgram(mCausticMapShaderProgram);
-        glm::vec4 ln = Glb::ProjToIntrinsic(mLightProjection, mWidth, mHeight);
-        glUniform4fv(glGetUniformLocation(mCausticMapShaderProgram, "lightIntrinsic"), 1, &ln[0]);
-       
-        glUseProgram(0);
+        mCausticMap->Use();
+        mCausticMap->SetVec4("lightIntrinsic", Glb::ProjToIntrinsic(mLightProjection, mWidth, mHeight));
+        mCausticMap->UnUse();
     }
 }
