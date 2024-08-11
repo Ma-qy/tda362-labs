@@ -122,6 +122,10 @@ GLuint loadShaderProgram(const std::string& vertexShader,
                          const std::string& fragmentShader,
                          bool allow_errors = false);
 
+GLuint loadShaderProgram(const std::string& vertexShader,
+							const std::string& fragmentShader,
+							const std::string& geomShader,
+							bool allow_errors = false);
 
 GLuint loadComputeShader(const std::string& computeShaderPath,
 							bool allow_errors = false);
@@ -168,6 +172,7 @@ void setUniformSlow(GLuint shaderProgram, const char* name, const GLuint value);
 void setUniformSlow(GLuint shaderProgram, const char* name, const bool value);
 void setUniformSlow(GLuint shaderProgram, const char* name, const glm::vec3& value);
 void setUniformSlow(GLuint shaderProgram, const char* name, const uint32_t nof_values, const glm::vec3* values);
+void setUniformSlow(GLuint shaderProgram, const char* name, const glm::uvec3& values);
 
 ///////////////////////////////////////////////////////////////////////////
 /// Draws a single quad (two triangles) that cover the entire screen

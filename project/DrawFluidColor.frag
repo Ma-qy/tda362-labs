@@ -14,6 +14,7 @@ uniform vec3 f0;
 uniform vec3 fluidColor;
 uniform vec3 shadowColor;
 uniform float thicknessFactor;
+uniform bool obstacleFlag;
 
 // ----------define----------
 struct Vertex {
@@ -42,6 +43,11 @@ struct Ray {
     vec3 origin;
     vec3 direction;
 };
+
+vec3 sphereCenter = vec3(0.0, 0.0, 0.06); 
+float sphereRadius = 0.1; 
+vec3 sphereColor = vec3(1.0, 0.5, 0.2);
+
 
 // ----------in out uniform----------
 in vec2 texCoord;
@@ -94,6 +100,7 @@ vec3 FresnelSchlic(vec3 wi, vec3 wh) {
     return f0 + (1.0 - f0) * pow(1.0 - cosTheta, 5.0);
 }
 
+//Converts depth information to a 3D position using camera intrinsics.
 vec3 Reproject(float depth, ivec2 imageCoord) { 
     // cameraIntrinsic = vec4(fxInv, fyInv, cx, cy)
     float x = abs(depth) * (float(imageCoord.x) - cameraIntrinsic.z) * cameraIntrinsic.x;
@@ -130,6 +137,8 @@ vec3 PhongShading(vec3 albedo, float roughness, vec3 lightPos, vec3 fragPos, vec
     return (ambient + diffuse + specular) * albedo;
 }
 
+
+//Computes the normal vector at a given pixel by sampling neighboring depths.
 vec3 CalculateNormal(ivec2 curPixelId, float curDepth, vec3 curPos) {
     float upDepth = imageLoad(zBuffer, curPixelId + ivec2(0, 1) * 2).x;
     float downDepth = imageLoad(zBuffer, curPixelId + ivec2(0, -1) * 2).x;
@@ -208,7 +217,39 @@ HitResult IntesectAllTriangles(Ray ray) {
     return minRes;
 }
 
-// ------------ÒõÓ°Ïà¹Øº¯Êı--------------
+HitResult IntersectSphere(Ray ray, vec3 sphereCenter, float sphereRadius) {
+    HitResult res;
+    res.isHit = -1;
+    res.dist = FLT_MAX;
+
+    vec3 oc = ray.origin - sphereCenter;
+    float a = dot(ray.direction, ray.direction);
+    float b = 2.0 * dot(oc, ray.direction);
+    float c = dot(oc, oc) - sphereRadius * sphereRadius;
+    float discriminant = b * b - 4 * a * c;
+
+    if (discriminant > 0.0) {
+        float t1 = (-b - sqrt(discriminant)) / (2.0 * a);
+        float t2 = (-b + sqrt(discriminant)) / (2.0 * a);
+
+        float t = t1 < t2 ? t1 : t2;
+
+        if (t > EPS) {
+            res.isHit = 1;
+            res.dist = t;
+            res.hitPoint = ray.origin + t * ray.direction;
+            res.normal = normalize(res.hitPoint - sphereCenter);
+            if (dot(ray.direction, res.normal) > 0.0) {
+                res.normal = -res.normal;
+            }
+        }
+    }
+
+    return res;
+}
+
+
+// ------------é˜´å½±ç›¸å…³å‡½æ•°--------------
 vec2 NdcToTexCoord(vec2 NdcXy) {
     // [-1, 1] -> [0, 1]
     return NdcXy * 0.5 + vec2(0.5);
@@ -229,17 +270,17 @@ float Pcf(vec2 texCoord, float fragDist) {
 }
 
 vec3 ShadeFloorWithShadow(vec3 originColor, vec3 lightPos, vec3 curPosition) {
-    // Í¶Ó°µ½¹âÔ´£¬È¡ÎÆÀí×ø±ê
+    // æŠ•å½±åˆ°å…‰æºï¼Œå–çº¹ç†åæ ‡
     vec4 fragNDC = lightProjection * lightView * model * vec4(curPosition, 1.0);
     fragNDC /= fragNDC.w;
     vec2 texCoord = NdcToTexCoord(fragNDC.xy);
 
-    // PCF·¨¼ÆËãÒõÓ°
+    // PCFæ³•è®¡ç®—é˜´å½±
     float fragDist = distance(lightPos, curPosition);
     float shadowFactor = 0.2 * Pcf(texCoord, fragDist);
     vec3 colorWithShadow = mix(originColor, shadowColor, shadowFactor);
 
-    // Ìí¼Ó½¹É¢
+    // æ·»åŠ ç„¦æ•£
     vec3 caustic = texture(causticMap, texCoord).xyz;
 
     return colorWithShadow + caustic;
@@ -247,6 +288,9 @@ vec3 ShadeFloorWithShadow(vec3 originColor, vec3 lightPos, vec3 curPosition) {
 
 vec3 GetRayTraceColor(Ray ray, vec3 fragPosition, vec3 viewPosition) {
     HitResult res = IntesectAllTriangles(ray);
+    HitResult sphereRes = IntersectSphere(ray, sphereCenter, sphereRadius);
+
+
     if (res.isHit == 1) {
         vec3 albedo = texture(texAlbedo, res.texCoord).rgb;
         float roughness = texture(texRoughness, res.texCoord).r;
@@ -254,17 +298,21 @@ vec3 GetRayTraceColor(Ray ray, vec3 fragPosition, vec3 viewPosition) {
         vec3 originColor = PhongShading(albedo, roughness, lightPos.xyz, fragPosition, viewPosition);
 
         return ShadeFloorWithShadow(originColor, lightPos.xyz, res.hitPoint);
-    } else {    
+    } else {
+        if(sphereRes.isHit == 1 && obstacleFlag){
+            return sphereColor;
+        }
         return texture(skybox, ray.direction.xzy).rgb;
     }
     return vec3(0.0);
 }
 
-// beer¶¨ÂÉ
+// beerå®šå¾‹
 float TransparentFactor(float thickness) {
     return max(exp(-thicknessFactor * thickness), 0.2);
 }
 
+//find the direction of a image coord in camera space
 vec3 imageCoordToWi(vec4 intrinsic, ivec2 imageCoord) {
     return vec3((imageCoord.x - intrinsic.z) * intrinsic.x, (imageCoord.y - intrinsic.w) * intrinsic.y, -1.0);
 }
@@ -277,43 +325,46 @@ void main()
         discard;
     }
 
-    // Ğ´ÈëÉî¶È
+    // å†™å…¥æ·±åº¦
     gl_FragDepth = ZToDepth(curDepth);
 
     vec4 camearOrigin = camToWorld * vec4(0.0, 0.0, 0.0, 1.0);
 
-    // ¼ÆËãÎ»ÖÃ
+    // è®¡ç®—ä½ç½®
     vec3 curPos = Reproject(curDepth, curPixelId);
     vec4 curPoseOnWorld = camToWorld * vec4(curPos, 1.0);
 
-    // ¼ÆËã¸÷ÖÖÏòÁ¿
+    // è®¡ç®—å„ç§å‘é‡
     vec4 normal = vec4(CalculateNormal(curPixelId, curDepth, curPos), 1.0);
     vec4 normalOnWorld = camToWorldRot * normal;
     vec3 wiOnCamera = imageCoordToWi(cameraIntrinsic, curPixelId);
     vec4 wiOnWorld = camToWorldRot * vec4(normalize(wiOnCamera), 1.0);
+
+
     vec3 woReflect = reflect(wiOnWorld.xyz, normalOnWorld.xyz);
     vec3 woRefract = refract(wiOnWorld.xyz, normalOnWorld.xyz, eta);
     vec3 fresnel = FresnelSchlic(wiOnWorld.xyz, normalOnWorld.xyz);
 
     mat4 worldToModel = inverse(model);
 
-    // ÕÛÉäÑÕÉ«
-    Ray refractRay;     // Ä£ĞÍ¾Ö²¿×ø±êÏµÏÂ
+
+    // æŠ˜å°„é¢œè‰²
+    Ray refractRay;     // æ¨¡å‹å±€éƒ¨åæ ‡ç³»ä¸‹
     refractRay.origin = (worldToModel * curPoseOnWorld).xyz;
     refractRay.direction = mat3(worldToModel) * woRefract;
     vec3 refractColor = GetRayTraceColor(refractRay, curPoseOnWorld.xyz, camearOrigin.xyz);
 
-    float thickness = imageLoad(thicknessBuffer, curPixelId).x;
-    float transparentFactor = TransparentFactor(thickness * 2.0);
-    refractColor = refractColor;
-
-    // ·´ÉäÑÕÉ«
+//    float thickness = imageLoad(thicknessBuffer, curPixelId).x;
+//    float transparentFactor = TransparentFactor(thickness * 0.5);
+//    refractColor = transparentFactor * refractColor + (1.0 - transparentFactor) * fluidColor;
+    // åå°„é¢œè‰²
     Ray reflectRay;
     reflectRay.origin = (worldToModel * curPoseOnWorld).xyz;
     reflectRay.direction = mat3(worldToModel) * woReflect;
     vec3 reflectColor = GetRayTraceColor(reflectRay, curPoseOnWorld.xyz, camearOrigin.xyz);
 
-    // »ìºÏ
+    // æ··åˆ
+    //vec3 outColor = mix(refractColor, reflectColor, fresnel);
     vec3 outColor = mix(refractColor, reflectColor, fresnel);
 
     FragColor = vec4(outColor, 1.0);

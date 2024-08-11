@@ -1,5 +1,9 @@
+#define M_PI 3.1415926
+
 #include "WCubicSpline.h"
-#include <glm/ext.hpp>
+
+
+#include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
 namespace Glb {
@@ -8,7 +12,12 @@ namespace Glb {
         mH = h;
         mH2 = h * h;
         mH3 = mH2 * h;
-        mSigma = 8.0 / (glm::pi<float>() * mH3);
+        //mSigma = 8.0 / (glm::pi<float>() * mH3);
+
+        int numIntervals = 10000; // Number of intervals for the numerical integration
+        float integralValue = numericalIntegration(0.0f, 1.0f, numIntervals);
+        float volumeFactor = 4.0f * M_PI * mH3;
+        mSigma = 1.0f / (volumeFactor * integralValue);
 
         mBufferSize = 128;
         //store precomputed values and gradients of the cubic spline function
@@ -20,7 +29,34 @@ namespace Glb {
             mValueAndGradFactorBuffer[i].g = CalculateGradFactor(distance);
         }
     }
+    // Define the integrand for the cubic spline kernel in 3D
+    float WCubicSpline3d::integrand(float q) {
+        if (0 <= q && q < 0.5f) {
+            return (6.0f * (q * q * q - q * q) + 1.0f) * q * q;
+        }
+        else if (0.5f <= q && q < 1.0f) {
+            return 2.0f * std::pow(1.0f - q, 3) * q * q;
+        }
+        else {
+            return 0.0f;
+        }
+    }
 
+    float WCubicSpline3d::numericalIntegration(float a, float b, int n) {
+        float h = (b - a) / n;
+
+        float ina = integrand(a);
+        float inb = integrand(b);
+        float integral = 0.5f * (ina + inb);
+        for (int i = 1; i < n; ++i) {
+            float x = a + i * h;
+            integral += integrand(x);
+        }
+        integral *= h;
+        return integral;
+    }
+
+    
     WCubicSpline3d::~WCubicSpline3d() {
 
     }

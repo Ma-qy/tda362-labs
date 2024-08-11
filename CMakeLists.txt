@@ -17,6 +17,7 @@ if(WIN32)
     list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/external/sdl2")
     list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/external/glew")
     list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/external/glm")
+    list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/external/glfw")
 endif(WIN32)
 
 macro(config_build_output)

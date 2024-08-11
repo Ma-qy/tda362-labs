@@ -1,0 +1,18 @@
+- Fluid Simulation using WCSPH
+	- 	Neiborhood Seaching in CPU
+	-   Physics Simulation in Compute Shader
+	-   Kernel Function - Cubic Spline Kernel
+
+- Water Rendering
+	-	Depth Texture, Filter, Normal Rebuild
+	-   Reflection and Refraction of Water
+	-   Soft Shadow
+	-	Caustic Texture
+
+- Smoke Simulation and Rendering
+	-   WCSPH / Buoyangcy - Repulsion
+	-	Thickness Texture
+
+- Obstacle Handling (Sphere)
+	- Fixed-Position Obstacle
+	- Floating Obstacle

@@ -1,4 +1,6 @@
+
 #include "ComputeShader.h"
+#include <glad/glad.h>
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -58,7 +60,7 @@ namespace Glb {
         }
         // delete the shaders
         glDeleteShader(computeShader);
-        std::cout << "compute shader success mName:" << mName << std::endl;
+        //std::cout << "compute shader success mName:" << mName << std::endl;
 
         return 0;
     }

@@ -1,5 +1,5 @@
 #include "Model.h"
-#include "labhelper.h"
+
 #include <iostream>
 #define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
 #include <tiny_obj_loader.h>
@@ -7,8 +7,13 @@
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <stb_image.h>
+
+
+#ifndef GL_TEXTURE_MAX_ANISOTROPY_EXT
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
+#endif
 
 namespace labhelper
 {
@@ -46,7 +51,7 @@ bool Texture::load(const std::string& _directory, const std::string& _filename, 
 	n_components = _components;
 	if(_components == 1)
 	{
-		format = GL_R;
+		format = GL_R8;
 		internal_format = GL_R8;
 	}
 	else if(_components == 3)

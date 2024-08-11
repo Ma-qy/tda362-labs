@@ -3,6 +3,7 @@
 #ifndef W_CUBE_SPLINE_H
 #define W_CUBE_SPLINE_H
 
+
 #include <glm/glm.hpp>
 #include <vector>
 
@@ -28,6 +29,8 @@ namespace Glb {
     private:
         float CalculateValue(float distance);
         float CalculateGradFactor(float distance);
+        float numericalIntegration(float a, float b, int n);
+        float integrand(float q);
 
     };
 
