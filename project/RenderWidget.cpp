@@ -249,7 +249,7 @@ namespace Fluid3d {
         
         ImGui::Checkbox("Smoke Compute Shader", &mSmokeCompute);
         if (ImGui::Button("Reset All")) {
-            mResetPars = true;
+            ps->RemoveAllFluid();
         }
 
         ImGui::InputFloat("Position X", &mSpherePoX);

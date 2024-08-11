@@ -78,7 +78,9 @@ namespace Fluid3d {
 
     void ParticalSystem3D::RemoveAllFluid()
     {
-        mParticalInfos.clear();
+        mParticalInfos = std::vector<ParticalInfo3d>();
+        std::vector<ParticalInfo3d> emptyPars(1);
+        mParticalInfos.insert(mParticalInfos.end(), emptyPars.begin(), emptyPars.end());
     }
 
     void ParticalSystem3D::SetFloatingBall(glm::vec3 position, float radius)

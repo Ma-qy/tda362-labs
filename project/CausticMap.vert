@@ -162,13 +162,14 @@ vec3 imageCoordToWi(vec4 intrinsic, ivec2 imageCoord) {
 }
 
 void main() {
-    ivec2 imageCoord = VertexIdToImgCoord();
+    ivec2 imageCoord = VertexIdToImgCoord();  //顶点id映射到图像坐标
     float curDepth = imageLoad(zBuffer, imageCoord).x;
     if (curDepth > 0.0) {
         gl_Position = vec4(FLT_MAX);
         return;
     }
 
+    //求该点在light space的位置、法线、入射方向 -> 折射方向 -> 找交点
     vec3 curPos = Reproject(curDepth, imageCoord, lightIntrinsic);
     vec4 curPoseOnWorld = lightToWorld * vec4(curPos, 1.0);
     

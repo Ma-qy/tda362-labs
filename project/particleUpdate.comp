@@ -277,7 +277,7 @@ void main() {
         BoundaryCondition(particals[particalId]);
         CalculateBlockId(particals[particalId]);
 
-        if(particalId == 1){
+        if(particalId == 0){
             sphere[0].acceleration = (1 - sphere[0].buoyangcy.z / 5.0) * gGravity * gGravityDir;
             if(abs(sphere[0].acceleration.z) < gGravity / 5.0){
                 sphere[0].acceleration = vec3(0.0);
