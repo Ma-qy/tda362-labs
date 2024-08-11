@@ -2,6 +2,9 @@
 This is the repository for the tutorials of the course TDA362/DIT223 Computer Graphics given at Chalmers University of
 Technology. It contains resources and skeleton code which is to be filled in by students in six different lab assignments and one larger project. 
 
+<img width="400" alt="截屏2024-08-11 21 44 24" src="https://github.com/user-attachments/assets/7d2ce380-a9ae-4207-a825-b6cfbd57236d">
+
+
 # Project in Advanced Computer Graphics Course
 I did a solo project in this course which is about fluid simulation and rendering. In this project, I implemented: 
  - Fluid Simulation using WCSPH
